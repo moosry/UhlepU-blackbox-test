@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Local Player System Test Checklist · UhelpU</title>
+    <title>Phantom Collision Volume Test Checklist · UhelpU</title>
     <style>
       @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap");
       * {
@@ -71,6 +71,12 @@
         font-weight: 700;
         color: var(--lt);
         letter-spacing: -0.3px;
+      }
+      .top-sub {
+        font-size: 12px;
+        color: rgba(200, 190, 240, 0.5);
+        margin-top: 6px;
+        line-height: 1.5;
       }
       .donut-wrap {
         flex-shrink: 0;
@@ -649,7 +655,12 @@
       <div class="top">
         <div class="top-left">
           <div class="top-eye">UhelpU · Testing</div>
-          <div class="top-title">Local Player System Test Checklist</div>
+          <div class="top-title">Phantom Collision Volume Test Checklist</div>
+          <div class="top-sub">
+            Core Rules: Phantom has no collision volume in preparation phase ·
+            Full collision volume during playback · No horizontal collision
+            between Phantom and Player · Full collision between Phantoms
+          </div>
         </div>
         <div class="donut-wrap">
           <div class="donut">
@@ -698,13 +709,13 @@
           <button class="fbtn" onclick="setF('normal', this)">Normal</button>
           <button class="fbtn" onclick="setF('edge', this)">Edge</button>
           <button class="fbtn" onclick="setF('bug', this)">Bug</button>
-          <button class="fbtn" onclick="setF('undone', this)">
-            Incomplete
-          </button>
+          <button class="fbtn" onclick="setF('undone', this)">Undone</button>
         </div>
       </div>
       <div id="pc"></div>
     </div>
+
+    <!-- Phase Modal -->
     <div class="mback" id="pm">
       <div class="modal">
         <h2 id="pm-t">Add Phase</h2>
@@ -715,10 +726,14 @@
         </div>
         <div class="fg">
           <label class="fl">Phase Name</label
-          ><input class="fi" id="pn" placeholder="Page Transition" />
+          ><input
+            class="fi"
+            id="pn"
+            placeholder="Preparation Phase Collision Volume"
+          />
         </div>
         <div class="fg">
-          <label class="fl">Colour</label
+          <label class="fl">Color</label
           ><select class="fs" id="pcol">
             <option value="purple">Purple</option>
             <option value="blue">Blue</option>
@@ -733,19 +748,23 @@
           ><input class="fi" id="ptime" placeholder="Game launched..." />
         </div>
         <div class="fg">
-          <label class="fl">Page(s)</label
-          ><input class="fi" id="pover" placeholder="MainMenu..." />
+          <label class="fl">Test Scene</label
+          ><input class="fi" id="pover" placeholder="Demo2 Level..." />
         </div>
         <div class="fg">
-          <label class="fl">Trigger</label
-          ><input class="fi" id="ptrig" placeholder="Player presses key..." />
+          <label class="fl">Trigger Method</label
+          ><input
+            class="fi"
+            id="ptrig"
+            placeholder="Player presses record button..."
+          />
         </div>
         <div class="fg">
           <label class="fl">Description</label
           ><textarea
             class="fta"
             id="pdesc"
-            placeholder="Main purpose..."
+            placeholder="Main test objective for this phase..."
           ></textarea>
         </div>
         <div class="frow">
@@ -767,6 +786,8 @@
         </div>
       </div>
     </div>
+
+    <!-- Case Modal -->
     <div class="mback" id="cm">
       <div class="modal">
         <h2 id="cm-t">Edit Case</h2>
@@ -776,7 +797,7 @@
           ><textarea class="fta" id="ct" style="min-height: 72px"></textarea>
         </div>
         <div class="fg">
-          <label class="fl">Phase</label
+          <label class="fl">Belongs to Phase</label
           ><select class="fs" id="cpsel"></select>
         </div>
         <div class="fg">
@@ -806,85 +827,68 @@
         </div>
       </div>
     </div>
+
     <div class="toast" id="toast"></div>
     <script>
-      const SK = "uhelpu_local_adhd_v1";
+      const SK = "uhelpu_phantom_collision_en_v1";
       const DD = {
         phases: [
           {
             id: "p0",
             badge: "PHASE 0",
-            name: "New Player — Name Input",
+            name: "Preparation Phase — Phantom Has No Collision Volume",
             color: "purple",
-            time: "No localStorage record",
-            overlay: "NameInputPage",
-            trigger: "Player enters name and confirms",
-            desc: "Player opens the game for the first time with no local storage. They must enter a name to proceed. Also tests whether UI text displays correctly in both Chinese and English.",
+            time: "Recording completed, playback button not pressed yet, Phantom generated and stays at recording start point",
+            overlay: "Demo2 Level",
+            trigger: "Enter preparation for playback after recording ends",
+            desc: "Verify that in the preparation phase after recording ends and before playback starts, the Phantom has no collision volume with the Player and scene at all, and the Player can freely pass through the Phantom's position.",
             cases: [
               {
                 id: "p0c0",
-                text: "With no localStorage, the game correctly shows the name input page instead of skipping it",
+                text: "After recording ends, the Player walks toward the Phantom's position and can pass directly through the Phantom without being blocked",
                 tag: "normal",
                 done: false,
               },
               {
                 id: "p0c1",
-                text: "Input field is empty by default; placeholder displays correctly in both language modes",
+                text: "The Player jumps down from above the Phantom, passes directly through the Phantom to land, and is not caught by the Phantom",
                 tag: "normal",
                 done: false,
               },
               {
                 id: "p0c2",
-                text: "Input field enforces a 12-character maximum; further input is blocked once the limit is reached",
+                text: "The Player stands on the position occupied by the Phantom, the two overlap completely without any pushing or jittering",
                 tag: "normal",
                 done: false,
               },
               {
                 id: "p0c3",
-                text: 'Confirming with an empty input shows the prompt "Please enter a name"',
+                text: "The Phantom in preparation phase does not trigger any scene buttons or switches, even if the Phantom stands directly above the button",
                 tag: "normal",
                 done: false,
               },
               {
                 id: "p0c4",
-                text: "Confirming with only spaces shows a validation prompt (whitespace-only names are rejected)",
-                tag: "edge",
+                text: "The Phantom in preparation phase does not collide with platforms or walls in the level, and the Phantom's display position is consistent with its physical position (not pushed away by collision)",
+                tag: "normal",
                 done: false,
               },
               {
                 id: "p0c5",
-                text: "Pressing Enter confirms the input, equivalent to clicking the Confirm button",
-                tag: "normal",
+                text: "Before pressing the playback button in the preparation phase, walk in and out of the Phantom's area multiple times; the Player's movement is always smooth without stuttering or slight pushing force",
+                tag: "edge",
                 done: false,
               },
               {
                 id: "p0c6",
-                text: "Pressing ESC returns to the language selection page",
-                tag: "normal",
+                text: "The Phantom in preparation phase stays at the edge of a slope, the Player can still pass through normally without changing movement trajectory due to Phantom collision",
+                tag: "edge",
                 done: false,
               },
               {
                 id: "p0c7",
-                text: "The input field receives focus automatically; the player does not need to click it manually",
-                tag: "normal",
-                done: false,
-              },
-              {
-                id: "p0c8",
-                text: 'Chinese names (e.g. "慕斯黎") display and submit correctly',
+                text: "The Phantom in preparation phase stays exactly at the suspended position on the edge of a platform, the Player can pass through the position without obstruction",
                 tag: "edge",
-                done: false,
-              },
-              {
-                id: "p0c9",
-                text: "Special characters (e.g. #, @, emoji) are handled without errors",
-                tag: "edge",
-                done: false,
-              },
-              {
-                id: "p0c10",
-                text: "Page title and description text display in the correct language based on the current language setting",
-                tag: "normal",
                 done: false,
               },
             ],
@@ -892,47 +896,66 @@
           {
             id: "p1",
             badge: "PHASE 1",
-            name: "Duplicate Detection — Unique Name",
-            color: "green",
-            time: "No localStorage; player enters a name that has never been used",
-            overlay: "NameInputPage → WorldSelect",
-            trigger: "Firebase playerNames query returns count=0",
-            desc: "Player enters a name that no one has used before. The system saves it to localStorage and proceeds to the game without showing any duplicate warning.",
+            name: "Playback Phase — Phantom Full Collision Volume",
+            color: "blue",
+            time: "Playback button pressed, Phantom starts moving according to recorded operations",
+            overlay: "Demo2 Level",
+            trigger:
+              "Player presses playback button to trigger Phantom playback",
+            desc: "Verify that after playback starts, the Phantom has complete physical collision volume and can interact normally with the scene, including being supported by platforms, blocked by walls, and having complete collision with other Phantoms.",
             cases: [
               {
                 id: "p1c0",
-                text: "Confirming a unique name proceeds directly to WorldSelect without any duplicate dialog",
+                text: "After playback starts, the Phantom stands on a platform without penetrating the platform and falling, with normal supporting collision with the platform",
                 tag: "normal",
                 done: false,
               },
               {
                 id: "p1c1",
-                text: "After entering WorldSelect, localStorage correctly stores the player name",
+                text: "The Phantom moves toward a wall during playback, is blocked by the wall and does not pass through",
                 tag: "normal",
                 done: false,
               },
               {
                 id: "p1c2",
-                text: "window.playerName global variable is correctly set to the entered name",
-                tag: "bug",
-                done: false,
-              },
-              {
-                id: "p1c3",
-                text: "A new document is added to the Firebase playerNames collection with count=1",
+                text: "The Phantom jumps during playback, can jump normally and land on the platform, with physical performance consistent with the Player",
                 tag: "normal",
                 done: false,
               },
               {
+                id: "p1c3",
+                text: "The Phantom lands on a moving platform, can move with the platform without penetration or drifting",
+                tag: "edge",
+                done: false,
+              },
+              {
                 id: "p1c4",
-                text: 'WorldSelect displays "Welcome! [name]" in the top-left corner with the correct name',
+                text: "The Phantom falls from a height to the ground, lands normally without penetrating the floor",
                 tag: "normal",
                 done: false,
               },
               {
                 id: "p1c5",
-                text: "The Confirm button is disabled while the Firebase query is in progress, preventing duplicate submissions",
-                tag: "bug",
+                text: "Two Phantoms generated by two separate recordings meet during playback, have complete collision volume between each other and cannot pass through each other",
+                tag: "normal",
+                done: false,
+              },
+              {
+                id: "p1c6",
+                text: "Two Phantoms play back simultaneously, one Phantom can step on the other's head to jump with leverage",
+                tag: "normal",
+                done: false,
+              },
+              {
+                id: "p1c7",
+                text: "Three Phantoms play back simultaneously and gather at the same position; multiple collisions do not cause crashes or abnormal ejection",
+                tag: "edge",
+                done: false,
+              },
+              {
+                id: "p1c8",
+                text: "The Phantom collides with scene catapults/bounce platforms during playback and can be correctly ejected (if designed in the level)",
+                tag: "edge",
                 done: false,
               },
             ],
@@ -940,71 +963,59 @@
           {
             id: "p2",
             badge: "PHASE 2",
-            name: "Duplicate Detection — Name Already Taken",
-            color: "amber",
-            time: "No localStorage; player enters a name already in use",
-            overlay: "NameInputPage — Duplicate Confirmation Dialog",
-            trigger: "Firebase playerNames query returns count>0",
-            desc: 'Player enters a name that already exists. A duplicate confirmation dialog appears, offering "Use it anyway!" and "Choose another" options.',
+            name: "Playback Phase — Phantom Pressing Buttons and Triggering Mechanisms",
+            color: "green",
+            time: "There are pressable buttons or switches in the level, and the Phantom's playback path passes through the button",
+            overlay: "Demo2 Level",
+            trigger: "Phantom moves to button position during playback",
+            desc: 'Verify that the Phantom during playback can correctly press scene buttons and trigger level mechanisms, which is the core function of the "cooperate with past self" mechanism.',
             cases: [
               {
                 id: "p2c0",
-                text: "Entering an existing name triggers the duplicate confirmation dialog",
+                text: "The Phantom walks above the button during playback, the button is triggered, and the corresponding mechanism (such as door opening/platform appearing) is activated normally",
                 tag: "normal",
                 done: false,
               },
               {
                 id: "p2c1",
-                text: 'Dialog shows the correct duplicate count (e.g. "3 players already use moosry")',
+                text: "While the Phantom is pressing the button, the mechanism remains activated; after the Phantom leaves the button, the mechanism returns to its original state (if level logic requires continuous pressing)",
                 tag: "normal",
                 done: false,
               },
               {
                 id: "p2c2",
-                text: "The name is highlighted in the dialog for readability",
+                text: "The Player and Phantom press two different buttons at the same time, and the dual-button linkage mechanism is triggered normally (core collaboration scenario)",
                 tag: "normal",
                 done: false,
               },
               {
                 id: "p2c3",
-                text: "Dialog text displays in the correct language based on the current language setting",
+                text: "After the Phantom presses the button to trigger the mechanism, the Player passes within the time window, and the level logic runs correctly",
                 tag: "normal",
                 done: false,
               },
               {
                 id: "p2c4",
-                text: 'Clicking "Use it anyway!" saves the name with a suffix (e.g. moosry#2) and enters the game',
+                text: "The Phantom stays directly above the button in the preparation phase, the button is not triggered; after pressing the playback button, the Phantom starts moving and triggers the button only when stepping on it again",
                 tag: "normal",
                 done: false,
               },
               {
                 id: "p2c5",
-                text: 'Clicking "Choose another" closes the dialog and returns focus to the input field',
-                tag: "normal",
+                text: "The Phantom jumps over the button (without stopping), confirm whether it is contact-triggered or requires continuous pressing, and the button behavior is consistent with expectations",
+                tag: "edge",
                 done: false,
               },
               {
                 id: "p2c6",
-                text: 'After selecting "Use it anyway!", the original name\'s count in Firebase is incremented by 1',
-                tag: "normal",
+                text: "The Phantom's playback ends (exceeds recording duration) and disappears automatically; if the Phantom is still pressing the button when disappearing, confirm whether the mechanism state is restored correctly",
+                tag: "edge",
                 done: false,
               },
               {
                 id: "p2c7",
-                text: 'After selecting "Use it anyway!", localStorage stores the full suffixed name (e.g. moosry#2)',
-                tag: "normal",
-                done: false,
-              },
-              {
-                id: "p2c8",
-                text: "With moosry and moosry#2 existing, a third player becomes moosry#3 — numbering is sequential",
-                tag: "edge",
-                done: false,
-              },
-              {
-                id: "p2c9",
-                text: "While the dialog is open, the background input page is non-interactive",
-                tag: "edge",
+                text: "The Phantom's playback is terminated early (manually stopped by the player), and is pressing the button at the moment of disappearance; confirm that the mechanism does not get stuck in the activated state (Bug)",
+                tag: "bug",
                 done: false,
               },
             ],
@@ -1012,47 +1023,71 @@
           {
             id: "p3",
             badge: "PHASE 3",
-            name: "Returning Player — localStorage Memory",
-            color: "blue",
-            time: "localStorage record already exists",
-            overlay: "NameInputPage (skipped) → WorldSelect",
-            trigger: "Name detected in localStorage on startup",
-            desc: "Player has previously entered a name. On this launch, the game reads localStorage, skips the name input page, and goes straight to WorldSelect.",
+            name: "Phantom & Player — No Horizontal Collision, Can Step on Head Vertically",
+            color: "amber",
+            time: "During playback, the Player approaches the Phantom",
+            overlay: "Demo2 Level",
+            trigger: "Player actively walks or jumps toward the Phantom",
+            desc: "Verify the asymmetric collision rules between Phantom and Player: the Player can pass through the Phantom in the horizontal direction (left/right), but can step on the Phantom's head for leverage in the vertical direction (up/down).",
             cases: [
               {
                 id: "p3c0",
-                text: "With localStorage present, the game skips the name input page and goes directly to WorldSelect",
+                text: "The Player walks toward the Phantom from the left and passes directly through the Phantom without being pushed away left/right",
                 tag: "normal",
                 done: false,
               },
               {
                 id: "p3c1",
-                text: "After skipping the input page, window.playerName is correctly set from localStorage",
-                tag: "bug",
+                text: "The Player walks toward the Phantom from the right and passes directly through the Phantom without being pushed away left/right",
+                tag: "normal",
                 done: false,
               },
               {
                 id: "p3c2",
-                text: "The welcome message in WorldSelect matches the name stored in localStorage",
+                text: "When the Player and Phantom overlap in the horizontal direction, both movements are unimpeded without mutual pushing or jittering",
                 tag: "normal",
                 done: false,
               },
               {
                 id: "p3c3",
-                text: "Suffixed names (e.g. moosry#2) are read and displayed correctly without losing the # portion",
-                tag: "edge",
+                text: "The Player jumps down from above the Phantom's head and can step firmly on the Phantom's head without penetrating into the Phantom's interior",
+                tag: "normal",
                 done: false,
               },
               {
                 id: "p3c4",
-                text: "After closing and reopening the browser, localStorage persists and no re-entry is required",
+                text: "When the Player steps on the Phantom's head and the Phantom is moving, the Player can move horizontally with the Phantom (like standing on a moving platform)",
                 tag: "normal",
                 done: false,
               },
               {
                 id: "p3c5",
-                text: "After running localStorage.clear() and refreshing, the name input page reappears",
-                tag: "normal",
+                text: "When the Player steps on the Phantom's head and the Phantom performs a jump action, the Player is bounced up with it (or according to design specifications: the Player is not carried up and only stays at the original height) — verify that actual behavior is consistent with design",
+                tag: "edge",
+                done: false,
+              },
+              {
+                id: "p3c6",
+                text: "The Phantom jumps upward from under the Player, hits the Player's feet, the Player is bounced upward, and the Phantom continues to rise without being blocked by the Player",
+                tag: "edge",
+                done: false,
+              },
+              {
+                id: "p3c7",
+                text: "While the Player stands on the Phantom's head, walk left/right to verify that the Player can move freely on the Phantom's head without interference from horizontal collision",
+                tag: "edge",
+                done: false,
+              },
+              {
+                id: "p3c8",
+                text: "The Player attempts to jump upward from directly under the Phantom; confirm that the Player will not be blocked inside the Phantom due to Phantom collision",
+                tag: "bug",
+                done: false,
+              },
+              {
+                id: "p3c9",
+                text: "The Player quickly dashes through the Phantom (if there is a dash skill); confirm that high-speed penetration does not trigger unexpected collision rebound",
+                tag: "edge",
                 done: false,
               },
             ],
@@ -1060,77 +1095,59 @@
           {
             id: "p4",
             badge: "PHASE 4",
-            name: "WorldSelect — Welcome Message & Rename",
-            color: "purple",
-            time: "Logged-in player (localStorage present)",
-            overlay: "StaticPageWorldSelect",
-            trigger: 'Player clicks "Change Name"',
-            desc: "WorldSelect shows a welcome message and rename entry point. Tests correct display of the welcome text, the full rename flow, and bilingual support.",
+            name: "Phantom Self-Collision Volume Integrity",
+            color: "red",
+            time: "During playback, the Phantom moves in the scene",
+            overlay: "Demo2 Level",
+            trigger: "Phantom moves normally according to recorded operations",
+            desc: "Verify that the Phantom's own collision volume remains complete and stable throughout playback, without misalignment, loss, or abnormal size of the collision volume.",
             cases: [
               {
                 id: "p4c0",
-                text: 'Top-left corner shows "Welcome! [name]", positioned to the right of the back button without overlapping',
+                text: "The Phantom's collision volume size is consistent with the Player, and the head-stomping height is the same as stepping on the Player's head",
                 tag: "normal",
                 done: false,
               },
               {
                 id: "p4c1",
-                text: "The name in the welcome message exactly matches localStorage, including any suffix",
+                text: 'When the Phantom moves quickly (recording a sequence of fast operations), the collision volume does not "shift" and is always aligned with the Phantom\'s display position',
                 tag: "normal",
                 done: false,
               },
               {
                 id: "p4c2",
-                text: '"Change Name" button is visible; clicking it opens the rename dialog',
+                text: "When the Phantom performs continuous jumps, it collides with the ground correctly every time it lands, without penetration or floating",
                 tag: "normal",
                 done: false,
               },
               {
                 id: "p4c3",
-                text: "The rename input is pre-filled with the current name for easy editing",
-                tag: "normal",
-                done: false,
-              },
-              {
-                id: "p4c4",
-                text: "Rename input enforces the 12-character limit and whitespace validation, consistent with initial entry",
-                tag: "normal",
-                done: false,
-              },
-              {
-                id: "p4c5",
-                text: "Renaming to the same name as the current name triggers no operation and closes the dialog",
+                text: "The Phantom moves in a narrow passage (width just enough to pass through); the interaction between the collision volume and scene geometry is correct without getting stuck or passing through walls",
                 tag: "edge",
                 done: false,
               },
               {
-                id: "p4c6",
-                text: "Renaming to a unique new name completes immediately and updates the welcome message",
-                tag: "normal",
+                id: "p4c4",
+                text: "The Phantom's playback is paused (game pause); the Phantom's collision volume remains in the correct position during pause and resumes normally after recovery",
+                tag: "edge",
                 done: false,
               },
               {
-                id: "p4c7",
-                text: "Renaming to an already-taken name triggers the duplicate dialog, following the same flow as initial entry",
-                tag: "normal",
-                done: false,
-              },
-              {
-                id: "p4c8",
-                text: "A loading state is shown during the rename operation; the button is disabled until complete",
+                id: "p4c5",
+                text: 'At the end of playback (one frame before the Phantom disappears), the collision volume disappears synchronously with the Phantom without leaving an "invisible collision volume"',
                 tag: "bug",
                 done: false,
               },
               {
-                id: "p4c9",
-                text: "After renaming, both localStorage and window.playerName are updated to the new name",
-                tag: "normal",
+                id: "p4c6",
+                text: "Re-record (overwrite recording) and start new playback immediately; the collision volume of the old playback is completely cleared and does not overlap with the new Phantom",
+                tag: "bug",
                 done: false,
               },
               {
-                id: "p4c10",
-                text: "Clicking Cancel closes the dialog without changing the name",
-                tag: "normal",
+                id: "p4c7",
+                text: "The Phantom moves on slopes or irregular terrain; the collision volume adapts normally to the terrain without floating sliding or embedding into the terrain",
+                tag: "edge",
                 done: false,
               },
             ],
@@ -1138,335 +1155,58 @@
           {
             id: "p5",
             badge: "PHASE 5",
-            name: "Rename — Leaderboard History Sync",
-            color: "amber",
-            time: "Player has existing leaderboard records; rename is performed",
-            overlay: "Firebase leaderboard collection",
-            trigger: "Rename confirmed, triggering _updateLeaderboardName",
-            desc: "After renaming, all leaderboard entries under the old name must be updated to the new name. This is the most bug-prone part of the system.",
+            name: "State Switching & Boundary Conditions",
+            color: "gray",
+            time: "Various extreme timing operations",
+            overlay: "Demo2 Level",
+            trigger: "Unconventional operation sequence or extreme timing",
+            desc: "Test whether the collision volume state switches correctly under extreme conditions of recording-playback state switching, ensuring no residual or prematurely activated collision volume.",
             cases: [
               {
                 id: "p5c0",
-                text: "After renaming, refreshing the leaderboard shows no entries under the old name",
-                tag: "normal",
+                text: "Start playback immediately after recording ends (Phantom just appears at the starting point); the Phantom's collision volume is activated correctly in the first frame of playback without delay",
+                tag: "edge",
                 done: false,
               },
               {
                 id: "p5c1",
-                text: "After renaming, historical scores and times are unchanged — only the name is updated",
-                tag: "normal",
+                text: "Manually stop playback midway; the Phantom disappears immediately, the collision volume disappears in the same frame, and the Player is not bounced away by residual volume",
+                tag: "bug",
                 done: false,
               },
               {
                 id: "p5c2",
-                text: "Player with records across multiple levels has all entries updated after renaming — none are missed",
+                text: "Playback ends naturally (all recorded content is played); the Phantom disappears, the collision volume is cleared synchronously, and scene mechanisms return to the correct state",
                 tag: "normal",
                 done: false,
               },
               {
                 id: "p5c3",
-                text: '"Your Rank" and "Personal Best" sections also reflect the new name after renaming',
+                text: "Trigger re-recording (press record button to overwrite) during playback; the old Phantom disappears immediately before the new recording starts, and all collision volumes are cleared",
                 tag: "bug",
                 done: false,
               },
               {
                 id: "p5c4",
-                text: "Completing a level immediately after renaming submits the score under the new name",
-                tag: "normal",
+                text: "After the player dies and resets, the recording data is cleared, and no residual Phantom collision volume remains in the scene",
+                tag: "bug",
                 done: false,
               },
               {
                 id: "p5c5",
-                text: "If the rename fails due to a network error, an error message is shown and localStorage and existing data are unchanged",
+                text: "When switching levels, the Phantom collision volume of the previous level does not remain in the new level",
                 tag: "bug",
                 done: false,
               },
               {
                 id: "p5c6",
-                text: "Player with a large history (10+ records) — rename does not time out and loading state displays correctly throughout",
-                tag: "edge",
-                done: false,
-              },
-            ],
-          },
-          {
-            id: "p6",
-            badge: "PHASE 6",
-            name: "Leaderboard — Score Submission",
-            color: "green",
-            time: "Player completes a timed level",
-            overlay: "WinPage / StaticPageWinEasy",
-            trigger: "Player reaches the goal, triggering level completion",
-            desc: "On completion, the player name, completion time, and level ID are submitted to the Firebase leaderboard collection. Tests data correctness and edge cases.",
-            cases: [
-              {
-                id: "p6c0",
-                text: "Score is successfully submitted after completion; a new record appears in the Firebase leaderboard collection",
-                tag: "normal",
-                done: false,
-              },
-              {
-                id: "p6c1",
-                text: "Submitted playerName matches the name currently stored in localStorage",
-                tag: "normal",
-                done: false,
-              },
-              {
-                id: "p6c2",
-                text: "Submitted levelId is correct (e.g. easy_level2); different levels produce different IDs",
-                tag: "normal",
-                done: false,
-              },
-              {
-                id: "p6c3",
-                text: "Submitted time (timeMs) matches the in-game timer display within an acceptable margin",
-                tag: "normal",
-                done: false,
-              },
-              {
-                id: "p6c4",
-                text: "Completing a level while offline — submission fails gracefully; the game does not crash and WinPage displays normally",
-                tag: "bug",
-                done: false,
-              },
-              {
-                id: "p6c5",
-                text: "The same player completing the same level multiple times — each run creates a new record without overwriting previous ones",
-                tag: "normal",
-                done: false,
-              },
-              {
-                id: "p6c6",
-                text: "Suffixed names (e.g. moosry#2) are submitted and displayed correctly on the leaderboard",
-                tag: "edge",
-                done: false,
-              },
-            ],
-          },
-          {
-            id: "p7",
-            badge: "PHASE 7",
-            name: "Leaderboard — Display",
-            color: "blue",
-            time: "WinPage loading phase",
-            overlay: "WinPage leaderboard section",
-            trigger:
-              "After level completion, entering WinPage auto-loads the leaderboard",
-            desc: "Leaderboard display logic on WinPage: deduplicated personal bests, top-3 effects, self-highlighting, and current/personal best stats.",
-            cases: [
-              {
-                id: "p7c0",
-                text: "Leaderboard background and title appear immediately without waiting for data",
-                tag: "normal",
-                done: false,
-              },
-              {
-                id: "p7c1",
-                text: "A skeleton or loading placeholder is shown while data loads — no blank state",
-                tag: "normal",
-                done: false,
-              },
-              {
-                id: "p7c2",
-                text: "Only each player's best time is shown; multiple records per player are deduplicated to the shortest",
-                tag: "normal",
-                done: false,
-              },
-              {
-                id: "p7c3",
-                text: "Leaderboard is sorted from shortest to longest time; rank 1 has the fastest time",
-                tag: "normal",
-                done: false,
-              },
-              {
-                id: "p7c4",
-                text: "Maximum of 10 entries are displayed; entries beyond 10th place are not shown",
-                tag: "normal",
-                done: false,
-              },
-              {
-                id: "p7c5",
-                text: "1st place shows 🥇, 2nd shows 🥈, 3rd shows 🥉",
-                tag: "normal",
-                done: false,
-              },
-              {
-                id: "p7c6",
-                text: 'Current player\'s entry is highlighted on the leaderboard with a "← YOU" marker',
-                tag: "normal",
-                done: false,
-              },
-              {
-                id: "p7c7",
-                text: 'If the current player is outside the top 10, "Your Rank: #X" is still shown below the leaderboard',
+                text: "Play back with an extremely short recording duration (e.g., stop recording after less than 0.1 seconds); the Phantom's collision volume still works normally",
                 tag: "edge",
                 done: false,
               },
               {
-                id: "p7c8",
-                text: '"This Run" shows the current completion time in X.XXs format',
-                tag: "normal",
-                done: false,
-              },
-              {
-                id: "p7c9",
-                text: "\"This Rank\" reflects the current run's position against all players' personal bests",
-                tag: "normal",
-                done: false,
-              },
-              {
-                id: "p7c10",
-                text: '"Personal Best" shows the player\'s shortest historical time for this level and their rank',
-                tag: "normal",
-                done: false,
-              },
-              {
-                id: "p7c11",
-                text: "Personal best time is accurate and does not display a worse time than the actual best",
-                tag: "bug",
-                done: false,
-              },
-              {
-                id: "p7c12",
-                text: 'If leaderboard data fails to load, "Connection failed, please try again" is shown — no blank state',
-                tag: "bug",
-                done: false,
-              },
-              {
-                id: "p7c13",
-                text: "Leaderboard only shows data for the current level — no entries from other levels appear",
-                tag: "normal",
-                done: false,
-              },
-              {
-                id: "p7c14",
-                text: "All times are formatted to two decimal places (e.g. 7.12s) — not 7.1s or 7.120s",
-                tag: "edge",
-                done: false,
-              },
-            ],
-          },
-          {
-            id: "p8",
-            badge: "PHASE 8",
-            name: "Leaderboard — Bilingual Text",
-            color: "gray",
-            time: "Language switched between Chinese and English",
-            overlay: "WinPage · NameInputPage · WorldSelect",
-            trigger: "Entering relevant pages after switching language",
-            desc: "All player system UI text must correctly respond to language switching, including prompts, button labels, and leaderboard headings.",
-            cases: [
-              {
-                id: "p8c0",
-                text: 'Chinese mode: name input page title shows "输入你的昵称"',
-                tag: "normal",
-                done: false,
-              },
-              {
-                id: "p8c1",
-                text: 'English mode: name input page title shows "Enter Your Player Name"',
-                tag: "normal",
-                done: false,
-              },
-              {
-                id: "p8c2",
-                text: 'Chinese mode: Confirm button shows "确认"; English mode shows "Confirm"',
-                tag: "normal",
-                done: false,
-              },
-              {
-                id: "p8c3",
-                text: "Duplicate dialog displays in the correct language based on current setting",
-                tag: "normal",
-                done: false,
-              },
-              {
-                id: "p8c4",
-                text: 'Chinese mode: WorldSelect welcome shows "欢迎！"; English mode shows "Welcome!"',
-                tag: "normal",
-                done: false,
-              },
-              {
-                id: "p8c5",
-                text: '"Change Name" button displays the correct label in each language mode',
-                tag: "normal",
-                done: false,
-              },
-              {
-                id: "p8c6",
-                text: 'WinPage shows "This Run / This Rank / Personal Best" in English and their Chinese equivalents in Chinese mode',
-                tag: "normal",
-                done: false,
-              },
-              {
-                id: "p8c7",
-                text: "Player names including Chinese characters display correctly on the leaderboard without garbling",
-                tag: "edge",
-                done: false,
-              },
-              {
-                id: "p8c8",
-                text: "After switching language and re-entering WinPage, all text switches to the new language with no residual text from the previous language",
-                tag: "bug",
-                done: false,
-              },
-            ],
-          },
-          {
-            id: "p9",
-            badge: "PHASE 9",
-            name: "Edge & Stress Testing",
-            color: "red",
-            time: "Various extreme conditions",
-            overlay: "Full system",
-            trigger: "Deliberately constructed edge scenarios",
-            desc: "Tests system robustness under extreme conditions including network failures, extreme inputs, and concurrent operations.",
-            cases: [
-              {
-                id: "p9c0",
-                text: "Entering a name while offline — Firebase query fails without crashing; system shows a reasonable fallback or allows entry",
-                tag: "bug",
-                done: false,
-              },
-              {
-                id: "p9c1",
-                text: "Completing a level while offline — submission fails gracefully; WinPage displays normally with a failure message on the leaderboard",
-                tag: "bug",
-                done: false,
-              },
-              {
-                id: "p9c2",
-                text: "Entering 12 Chinese characters (maximum length) — submission and display both work correctly",
-                tag: "edge",
-                done: false,
-              },
-              {
-                id: "p9c3",
-                text: "Entering 12 emoji characters (maximum length) — submission and display both work correctly",
-                tag: "edge",
-                done: false,
-              },
-              {
-                id: "p9c4",
-                text: "Rapidly clicking Confirm multiple times in quick succession — no duplicate submissions or extra playerNames records created",
-                tag: "bug",
-                done: false,
-              },
-              {
-                id: "p9c5",
-                text: "Closing the browser mid-rename (during loading state) — on reopening, name state is consistent (either old or new, never empty)",
-                tag: "bug",
-                done: false,
-              },
-              {
-                id: "p9c6",
-                text: "Leaderboard with more than 10 records — only top 10 are shown; page does not lag",
-                tag: "edge",
-                done: false,
-              },
-              {
-                id: "p9c7",
-                text: "Two browser windows completing different levels simultaneously — both scores are written correctly to the leaderboard",
+                id: "p5c7",
+                text: "Record and play back at the maximum recording time limit (5s/8s); the collision volume is stable throughout playback and cleared correctly at the end",
                 tag: "edge",
                 done: false,
               },
@@ -1518,7 +1258,7 @@
           d.className = "pcard" + (ph.collapsed ? " col" : "");
           const detail =
             ph.time || ph.overlay || ph.trigger
-              ? `<div class="pdetail">${ph.time ? `<span><span class="dk">Pre:</span><span class="dv">${ph.time}</span></span>` : ""} ${ph.overlay ? `<span><span class="dk">Page:</span><span class="dv">${ph.overlay}</span></span>` : ""} ${ph.trigger ? `<span><span class="dk">Trigger:</span><span class="dv">${ph.trigger}</span></span>` : ""}</div>`
+              ? `<div class="pdetail">${ph.time ? `<span><span class="dk">Pre:</span><span class="dv">${ph.time}</span></span>` : ""} ${ph.overlay ? `<span><span class="dk">Scene:</span><span class="dv">${ph.overlay}</span></span>` : ""} ${ph.trigger ? `<span><span class="dk">Trigger:</span><span class="dv">${ph.trigger}</span></span>` : ""}</div>`
               : "";
           const rows =
             vis.length === 0
@@ -1577,7 +1317,7 @@
         render();
       }
       function delC(pid, cid) {
-        if (!confirm("Delete this test case?")) return;
+        if (!confirm("Confirm delete this case?")) return;
         const p = data.phases.find((p) => p.id === pid);
         if (p) {
           p.cases = p.cases.filter((c) => c.id !== cid);
@@ -1679,7 +1419,8 @@
       }
       function delPhase() {
         const id = document.getElementById("pe-id").value;
-        if (!id || !confirm("Delete this phase and all its cases?")) return;
+        if (!id || !confirm("Confirm delete this phase and all its cases?"))
+          return;
         data.phases = data.phases.filter((p) => p.id !== id);
         save();
         render();
@@ -1731,7 +1472,7 @@
       function delCase() {
         const pid = document.getElementById("ce-ph").value,
           cid = document.getElementById("ce-id").value;
-        if (!confirm("Delete this case?")) return;
+        if (!confirm("Confirm delete this case?")) return;
         const p = data.phases.find((p) => p.id === pid);
         if (p) p.cases = p.cases.filter((c) => c.id !== cid);
         save();
@@ -1757,7 +1498,10 @@
         a.href =
           "data:text/plain," +
           encodeURIComponent(JSON.stringify(data, null, 2));
-        a.download = "data_" + new Date().toISOString().slice(0, 10) + ".json";
+        a.download =
+          "phantom_collision_en_" +
+          new Date().toISOString().slice(0, 10) +
+          ".json";
         a.click();
         showToast("✓ Exported");
       }
