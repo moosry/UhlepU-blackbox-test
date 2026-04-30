@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Account System Test Checklist · EasyLevel1</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#f0f0f5;--white:#fff;--dark2:#16161f;--dark3:#1c1c28;
+  --border:#e2e2ec;--text:#111118;--mid:#6b6b88;--dim:rgba(200,190,240,0.5);
+  --lt:#f0eeff;--purple:#7c5af6;--pdim:rgba(124,90,246,0.1);
+  --green:#16a34a;--gbg:#dcfce7;--gtxt:#15803d;
+  --amber:#b45309;--abg:#fef3c7;--atxt:#92400e;
+  --red:#dc2626;--rbg:#fee2e2;--rtxt:#991b1b;
+  --f:'IBM Plex Sans',Helvetica,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+}
+body{background:var(--bg);font-family:var(--f);color:var(--text);padding:20px 16px 60px;}
+.wrap{max-width:700px;margin:0 auto;}
+.top{background:var(--dark2);border-radius:16px;padding:20px 22px;display:flex;align-items:center;gap:18px;margin-bottom:12px;}
+.top-left{flex:1;min-width:0;}
+.top-eye{font-family:var(--mono);font-size:9px;color:rgba(124,90,246,0.8);letter-spacing:.14em;text-transform:uppercase;margin-bottom:5px;}
+.top-title{font-size:20px;font-weight:700;color:var(--lt);letter-spacing:-.3px;}
+.donut-wrap{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.donut{position:relative;width:80px;height:80px;}
+.donut svg{width:80px;height:80px;transform:rotate(-90deg);}
+.d-bg{fill:none;stroke:rgba(255,255,255,0.07);stroke-width:6;}
+.d-fill{fill:none;stroke:var(--purple);stroke-width:6;stroke-linecap:round;stroke-dasharray:207.3;stroke-dashoffset:207.3;transition:stroke-dashoffset .5s ease;}
+.donut-c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;}
+.donut-n{font-family:var(--mono);font-size:26px;font-weight:500;color:var(--lt);line-height:1;}
+.donut-d{font-family:var(--mono);font-size:12px;color:var(--dim);line-height:1;}
+.donut-lbl{font-size:10px;color:var(--dim);letter-spacing:.04em;}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+.sc{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:11px 13px;display:flex;align-items:center;gap:9px;}
+.sc-ico{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.sc-ico.n{background:var(--gbg);}.sc-ico.e{background:var(--abg);}.sc-ico.b{background:var(--rbg);}
+.sc-num{font-family:var(--mono);font-size:18px;font-weight:500;color:var(--text);line-height:1;}
+.sc-lbl{font-size:11px;color:var(--mid);margin-top:1px;}
+.toolbar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:14px;}
+.tbtn{padding:7px 13px;border-radius:8px;border:1px solid var(--border);background:var(--white);color:var(--text);font-family:var(--f);font-size:12px;font-weight:500;cursor:pointer;transition:all .14s;}
+.tbtn:hover{border-color:rgba(124,90,246,.35);background:var(--pdim);}
+.tbtn.pri{background:var(--purple);border-color:var(--purple);color:#fff;}
+.tbtn.pri:hover{opacity:.88;}
+.fgroup{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap;}
+.fbtn{padding:5px 11px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--mid);font-family:var(--f);font-size:11px;font-weight:500;cursor:pointer;transition:all .14s;}
+.fbtn:hover,.fbtn.on{background:var(--pdim);color:var(--purple);border-color:rgba(124,90,246,.3);}
+.pcard{margin-bottom:8px;border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.06);}
+.ph{background:var(--dark2);padding:14px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none;transition:background .14s;border-bottom:1px solid rgba(255,255,255,0.04);}
+.pcard.col .ph{border-bottom:none;}
+.ph:hover{background:var(--dark3);}
+.stripe{width:4px;height:34px;border-radius:2px;flex-shrink:0;}
+.ph-mid{flex:1;min-width:0;}
+.ph-badge{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px;}
+.ph-name{font-size:14px;font-weight:600;color:var(--lt);line-height:1.25;}
+.ph-prog{display:flex;align-items:center;gap:8px;margin-top:5px;}
+.ph-bar{flex:1;max-width:120px;height:3px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;}
+.ph-fill{height:100%;border-radius:2px;transition:width .4s;}
+.ph-frac{font-family:var(--mono);font-size:10px;color:var(--dim);}
+.ph-frac.all{color:#22c97a;}
+.ph-arr{font-size:11px;color:rgba(255,255,255,0.25);transition:transform .2s;margin-left:6px;}
+.pcard.col .ph-arr{transform:rotate(-90deg);}
+.ph-edit{font-size:10px;padding:2px 8px;border-radius:5px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.3);cursor:pointer;opacity:0;transition:opacity .14s;font-family:var(--f);}
+.ph:hover .ph-edit{opacity:1;}
+.ph-edit:hover{color:var(--lt);border-color:rgba(255,255,255,0.25);}
+.pdetail{background:var(--dark3);padding:7px 18px;display:flex;gap:14px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,0.04);}
+.dk{font-size:11px;font-weight:600;color:rgba(160,150,210,0.5);margin-right:3px;}
+.dv{font-size:11px;color:rgba(200,190,240,0.7);}
+.pbody{background:var(--white);border:1px solid var(--border);border-top:none;}
+.pcard.col .pbody,.pcard.col .pdetail{display:none;}
+.crow{display:flex;align-items:flex-start;gap:12px;padding:12px 18px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s;}
+.crow:last-of-type{border-bottom:none;}
+.crow:hover{background:#fafafa;}
+.crow.done{opacity:.42;}
+.cbox{width:22px;height:22px;border-radius:6px;border:2px solid #d4d4e8;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.crow:hover .cbox{border-color:var(--purple);}
+.cbox.on{background:var(--purple);border-color:var(--purple);}
+.cbox.on::after{content:'✓';font-size:12px;color:#fff;font-weight:700;}
+.ccont{flex:1;min-width:0;}
+.ctxt{font-size:13px;color:var(--text);line-height:1.55;}
+.done .ctxt{text-decoration:line-through;color:var(--mid);}
+.tpill{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;padding:2px 9px;border-radius:999px;margin-top:5px;}
+.tpill.n{background:var(--gbg);color:var(--gtxt);}.tpill.e{background:var(--abg);color:var(--atxt);}.tpill.b{background:var(--rbg);color:var(--rtxt);}
+.tpill-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.tpill.n .tpill-dot{background:var(--green);}.tpill.e .tpill-dot{background:var(--amber);}.tpill.b .tpill-dot{background:var(--red);}
+.cacts{display:flex;gap:3px;flex-shrink:0;opacity:0;transition:opacity .14s;}
+.crow:hover .cacts{opacity:1;}
+.cact{font-size:10px;padding:3px 8px;border-radius:5px;border:1px solid var(--border);background:#f5f5f8;color:var(--mid);cursor:pointer;font-family:var(--f);transition:all .1s;}
+.cact:hover{color:var(--text);border-color:#c8c8dc;}
+.cact.del:hover{color:var(--red);border-color:rgba(220,38,38,.3);}
+.addwrap{background:#fafafa;border-top:1px solid var(--border);padding:9px 18px;}
+.addrow{display:flex;gap:7px;}
+.ainp{flex:1;background:var(--white);border:1px solid var(--border);border-radius:8px;padding:7px 11px;font-family:var(--f);font-size:13px;color:var(--text);outline:none;transition:border-color .14s;}
+.ainp:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(124,90,246,.08);}
+.ainp::placeholder{color:#b8b8d0;}
+.asel{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:7px 9px;font-family:var(--f);font-size:11px;font-weight:500;color:var(--mid);outline:none;cursor:pointer;}
+.abtn{padding:7px 14px;border-radius:8px;border:none;background:var(--purple);color:#fff;font-family:var(--f);font-size:12px;font-weight:600;cursor:pointer;}
+.abtn:hover{opacity:.88;}
+.empty{padding:14px 18px;text-align:center;font-size:12px;color:var(--mid);}
+.mback{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(3px);}
+.mback.on{display:flex;}
+.modal{background:#fff;border:1px solid var(--border);border-radius:16px;padding:26px;width:460px;max-width:92vw;box-shadow:0 20px 60px rgba(0,0,0,0.15);}
+.modal h2{font-size:18px;font-weight:700;color:var(--text);margin-bottom:18px;letter-spacing:-.3px;}
+.fg{margin-bottom:12px;}
+.fl{font-size:11px;font-weight:600;color:var(--mid);display:block;margin-bottom:4px;letter-spacing:.04em;}
+.fi,.fs,.fta{width:100%;background:#f7f7fb;border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-family:var(--f);font-size:13px;color:var(--text);outline:none;transition:border-color .14s;}
+.fi:focus,.fs:focus,.fta:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(124,90,246,.08);}
+.fi::placeholder,.fta::placeholder{color:#b8b8d0;}
+.fta{resize:vertical;min-height:56px;}
+.fs{cursor:pointer;}
+.frow{display:flex;gap:8px;margin-top:18px;}
+.toast{position:fixed;bottom:22px;right:22px;background:var(--dark2);color:var(--lt);font-size:12px;font-weight:500;padding:10px 16px;border-radius:10px;display:none;z-index:300;animation:sup .2s ease;}
+@keyframes sup{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="top">
+  <div class="top-left">
+    <div class="top-eye">EasyLevel1 · Account System</div>
+    <div class="top-title">Account System Test Checklist</div>
+  </div>
+  <div class="donut-wrap">
+    <div class="donut">
+      <svg viewBox="0 0 80 80"><circle class="d-bg" cx="40" cy="40" r="33"/><circle class="d-fill" id="dfill" cx="40" cy="40" r="33"/></svg>
+      <div class="donut-c"><div class="donut-n" id="dn">0</div><div class="donut-d" id="dd">/ 0</div></div>
+    </div>
+    <div class="donut-lbl">Passed</div>
+  </div>
+</div>
+<div class="stats">
+  <div class="sc"><div class="sc-ico n">✓</div><div><div class="sc-num" id="sn">0</div><div class="sc-lbl">Normal Flow</div></div></div>
+  <div class="sc"><div class="sc-ico e">△</div><div><div class="sc-num" id="se">0</div><div class="sc-lbl">Edge Cases</div></div></div>
+  <div class="sc"><div class="sc-ico b">!</div><div><div class="sc-num" id="sb">0</div><div class="sc-lbl">Potential Bugs</div></div></div>
+</div>
+<div class="toolbar">
+  <button class="tbtn pri" onclick="openAddPhase()">＋ Add Phase</button>
+  <button class="tbtn" onclick="expandAll()">Expand All</button>
+  <button class="tbtn" onclick="collapseAll()">Collapse All</button>
+  <button class="tbtn" onclick="resetChecks()">Reset Checks</button>
+  <button class="tbtn pri" onclick="doExport()">⬇ Export HTML</button>
+  <div class="fgroup">
+    <button class="fbtn on" onclick="setF('all',this)">All</button>
+    <button class="fbtn" onclick="setF('normal',this)">Normal</button>
+    <button class="fbtn" onclick="setF('edge',this)">Edge</button>
+    <button class="fbtn" onclick="setF('bug',this)">Bug</button>
+    <button class="fbtn" onclick="setF('undone',this)">Incomplete</button>
+  </div>
+</div>
+<div id="pc"></div>
+</div>
+
+<!-- Phase Modal -->
+<div class="mback" id="pm">
+  <div class="modal">
+    <h2 id="pm-t">Add Phase</h2><input type="hidden" id="pe-id">
+    <div class="fg"><label class="fl">Phase ID</label><input class="fi" id="pb" placeholder="PHASE 1"></div>
+    <div class="fg"><label class="fl">Phase Name</label><input class="fi" id="pn" placeholder="Registration Flow"></div>
+    <div class="fg"><label class="fl">Colour</label><select class="fs" id="pcol"><option value="purple">Purple</option><option value="blue">Blue</option><option value="green">Green</option><option value="amber">Amber</option><option value="red">Red</option><option value="gray">Gray</option></select></div>
+    <div class="fg"><label class="fl">Precondition</label><input class="fi" id="ptime" placeholder="No localStorage / Logged-in account"></div>
+    <div class="fg"><label class="fl">Page / Screen</label><input class="fi" id="pover" placeholder="NameInputPage / WorldSelect"></div>
+    <div class="fg"><label class="fl">Trigger (to next phase)</label><input class="fi" id="ptrig" placeholder="Click Register button"></div>
+    <div class="fg"><label class="fl">Description</label><textarea class="fta" id="pdesc" placeholder="Main purpose of this phase..."></textarea></div>
+    <div class="frow">
+      <button class="tbtn pri" onclick="savePhase()">Save</button>
+      <button class="tbtn" onclick="closeM('pm')">Cancel</button>
+      <button class="tbtn" id="dpb" style="margin-left:auto;display:none;color:var(--red);border-color:rgba(220,38,38,.3);" onclick="delPhase()">Delete Phase</button>
+    </div>
+  </div>
+</div>
+
+<!-- Case Modal -->
+<div class="mback" id="cm">
+  <div class="modal">
+    <h2 id="cm-t">Edit Case</h2>
+    <input type="hidden" id="ce-ph"><input type="hidden" id="ce-id">
+    <div class="fg"><label class="fl">Test Content</label><textarea class="fta" id="ct" placeholder="Describe what this test case verifies..." style="min-height:72px;"></textarea></div>
+    <div class="fg"><label class="fl">Phase</label><select class="fs" id="cpsel"></select></div>
+    <div class="fg"><label class="fl">Type</label><select class="fs" id="ctag"><option value="normal">Normal Flow — main path, must pass</option><option value="edge">Edge Case — non-standard operation</option><option value="bug">Potential Bug — prone to code issues</option></select></div>
+    <div class="frow">
+      <button class="tbtn pri" onclick="saveCase()">Save</button>
+      <button class="tbtn" onclick="closeM('cm')">Cancel</button>
+      <button class="tbtn" id="dcb" style="margin-left:auto;display:none;color:var(--red);border-color:rgba(220,38,38,.3);" onclick="delCase()">Delete Case</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">✓ Saved</div>
+
+<script>
+const SK='account_system_test_checklist_v1';
+const CIRC=2*Math.PI*33;
+
+const DD={
+  phases:[
+    {
+      id:'p0', badge:'PHASE 0', name:'Entry Point — Choose Identity', color:'gray',
+      time:'No localStorage record',
+      overlay:'NameInputPage',
+      trigger:'Open the game with no prior login or name entry',
+      desc:'Tests that when a new player opens the game, NameInputPage correctly shows three entry options: Guest, Login, and Register — along with correct Chinese/English text switching.',
+      collapsed:false,
+      cases:[
+        {id:'p0c0',text:'With no localStorage, opening the game shows the Name Input page with card title "Choose your identity"',tag:'normal',done:false},
+        {id:'p0c1',text:'Page shows three buttons: "Play as Guest", "Log In", and "Register"',tag:'normal',done:false},
+        {id:'p0c2',text:'Buttons display in Chinese in Chinese mode and in English in English mode',tag:'normal',done:false},
+        {id:'p0c3',text:'Name input field is still present; 12-character limit works correctly',tag:'normal',done:false},
+        {id:'p0c4',text:'Back button correctly navigates to the language selection page',tag:'normal',done:false},
+        {id:'p0c5',text:'If playerAccount (account) exists in localStorage, this page is skipped and WorldSelect is entered directly',tag:'normal',done:false},
+        {id:'p0c6',text:'If playerName (guest) exists in localStorage, this page is skipped and WorldSelect is entered directly',tag:'normal',done:false},
+        {id:'p0c7',text:'If both playerAccount and playerName exist, playerAccount takes priority and the game enters as an account user',tag:'edge',done:false},
+      ]
+    },
+    {
+      id:'p1', badge:'PHASE 1', name:'Registration — Brand New Username', color:'purple',
+      time:'No localStorage; username not present in accountNames',
+      overlay:'NameInputPage — Registration form',
+      trigger:'Click the "Register" button',
+      desc:'Player clicks Register, fills in username, email, and password. The username does not exist in the accountNames collection. On success, the player enters the game.',
+      collapsed:false,
+      cases:[
+        {id:'p1c0',text:'Clicking "Register" opens the registration form with three fields: username, email, and password',tag:'normal',done:false},
+        {id:'p1c1',text:'Leaving username empty and clicking confirm shows an error prompt',tag:'normal',done:false},
+        {id:'p1c2',text:'Username exceeding 12 characters shows an error prompt',tag:'normal',done:false},
+        {id:'p1c3',text:'Malformed email address causes Firebase to return an error and shows a "Registration failed" prompt',tag:'normal',done:false},
+        {id:'p1c4',text:'Password too short (fewer than 6 characters) causes Firebase to return an error and shows a prompt',tag:'normal',done:false},
+        {id:'p1c5',text:'Registering with valid info succeeds; localStorage gains playerAccount with uid, username, email, and isAccount:true',tag:'normal',done:false},
+        {id:'p1c6',text:'After successful registration, playerName is also set to the username',tag:'normal',done:false},
+        {id:'p1c7',text:'After successful registration, window.playerName is correctly set',tag:'bug',done:false},
+        {id:'p1c8',text:'Firestore users collection contains a new document for the user with username and email fields',tag:'normal',done:false},
+        {id:'p1c9',text:'accountNames collection contains a new document for the username with count=1',tag:'normal',done:false},
+        {id:'p1c10',text:'After successful registration, WorldSelect is entered and shows 👑 + username',tag:'normal',done:false},
+        {id:'p1c11',text:'Submit button is disabled during registration to prevent duplicate submissions',tag:'bug',done:false},
+      ]
+    },
+    {
+      id:'p2', badge:'PHASE 2', name:'Registration — Duplicate Username', color:'amber',
+      time:'An account with the same username already exists in accountNames',
+      overlay:'NameInputPage — Duplicate name confirmation dialog',
+      trigger:'Enter a username that already exists in accountNames during registration',
+      desc:'Account username duplicate detection compares only against accountNames — completely independent from playerNames (guests). A duplicate-name confirmation dialog appears and a numbered suffix is assigned.',
+      collapsed:false,
+      cases:[
+        {id:'p2c0',text:'Entering an existing account username shows the duplicate confirmation dialog with the correct duplicate count',tag:'normal',done:false},
+        {id:'p2c1',text:'A guest named "moosry" (playerNames count=1) does not trigger the duplicate dialog when registering as "moosry" — the two namespaces are independent',tag:'normal',done:false},
+        {id:'p2c2',text:'Clicking "Keep it!" assigns a suffix such as moosry#2 and increments accountNames count',tag:'normal',done:false},
+        {id:'p2c3',text:'Clicking "Pick another" closes the dialog and returns to the registration form',tag:'normal',done:false},
+        {id:'p2c4',text:'When moosry and moosry#2 already exist, a third account choosing "Keep it!" becomes moosry#3 — numbering is sequential',tag:'edge',done:false},
+        {id:'p2c5',text:'Duplicate dialog text correctly switches between Chinese and English',tag:'normal',done:false},
+      ]
+    },
+    {
+      id:'p3', badge:'PHASE 3', name:'Login Flow', color:'blue',
+      time:'Registered account exists; no localStorage',
+      overlay:'NameInputPage — Login form',
+      trigger:'Click the "Log In" button',
+      desc:'Player re-logs in on a different device or after clearing localStorage using email and password. On success, the username is fetched from Firestore users collection before entering the game.',
+      collapsed:false,
+      cases:[
+        {id:'p3c0',text:'Clicking "Log In" opens the login form with email and password fields',tag:'normal',done:false},
+        {id:'p3c1',text:'Incorrect email or password shows "Login failed, please check your email and password"',tag:'normal',done:false},
+        {id:'p3c2',text:'After successful login, the correct username is read from Firestore users/{uid}',tag:'normal',done:false},
+        {id:'p3c3',text:'After successful login, both playerAccount and playerName are written to localStorage',tag:'normal',done:false},
+        {id:'p3c4',text:'After successful login, WorldSelect is entered showing 👑 username + Change Username + Log Out buttons',tag:'normal',done:false},
+        {id:'p3c5',text:'Logging into the same account on a different computer shows the same username and score history',tag:'normal',done:false},
+        {id:'p3c6',text:'Login button is disabled during login to prevent repeated clicks',tag:'bug',done:false},
+        {id:'p3c7',text:'After successful login, window.playerName is correctly set to the account username',tag:'bug',done:false},
+      ]
+    },
+    {
+      id:'p4', badge:'PHASE 4', name:'Guest-to-Account Migration — Score Transfer', color:'green',
+      time:'localStorage has playerName (guest); registering a new account',
+      overlay:'NameInputPage — Transfer confirmation dialog',
+      trigger:'Guest playerName detected after successful registration',
+      desc:'Player has played several sessions as a guest, then registers an account. The system detects the guest record and shows a dialog asking whether to transfer scores.',
+      collapsed:false,
+      cases:[
+        {id:'p4c0',text:'After successful registration, if localStorage contains playerName, a dialog "Transfer guest scores to account?" appears',tag:'normal',done:false},
+        {id:'p4c1',text:'The dialog correctly displays the guest\'s name',tag:'normal',done:false},
+        {id:'p4c2',text:'Clicking "Transfer" updates the playerName field of all matching guest records in the Firebase leaderboard to the account username',tag:'normal',done:false},
+        {id:'p4c3',text:'After transfer, the playerNames collection decrements count for the guest name; the document is deleted if count reaches 0',tag:'normal',done:false},
+        {id:'p4c4',text:'After transfer, the guest playerName in localStorage is cleared; only playerAccount remains',tag:'normal',done:false},
+        {id:'p4c5',text:'Clicking "Skip" leaves guest scores untransferred, enters the game directly, and guest records remain in Firebase',tag:'normal',done:false},
+        {id:'p4c6',text:'After transfer, the old guest name disappears from the leaderboard and the account username shows 👑',tag:'normal',done:false},
+        {id:'p4c7',text:'If the guest name and account username are the same (e.g. both "moosry"), the leaderboard displays correctly after transfer without confusion',tag:'edge',done:false},
+        {id:'p4c8',text:'If network fails during transfer, an error is shown and guest data is not lost',tag:'bug',done:false},
+      ]
+    },
+    {
+      id:'p5', badge:'PHASE 5', name:'Log Out', color:'gray',
+      time:'Logged-in account user',
+      overlay:'WorldSelect',
+      trigger:'Click the "Log Out" button',
+      desc:'After an account user logs out, all local records are cleared, the app returns to the Name Input page, and the player can choose to play as guest or log into a different account.',
+      collapsed:false,
+      cases:[
+        {id:'p5c0',text:'Clicking "Log Out" clears both playerAccount and playerName from localStorage',tag:'normal',done:false},
+        {id:'p5c1',text:'After logout, the app navigates back to NameInputPage showing the three entry buttons',tag:'normal',done:false},
+        {id:'p5c2',text:'After logout, window.playerName is cleared or set to null',tag:'bug',done:false},
+        {id:'p5c3',text:'After logout, refreshing the page still shows NameInputPage — it is not automatically skipped',tag:'normal',done:false},
+        {id:'p5c4',text:'After logout, the same account can be logged back in successfully',tag:'normal',done:false},
+        {id:'p5c5',text:'After logout, a different account can be logged in successfully',tag:'normal',done:false},
+        {id:'p5c6',text:'After logout, the player can continue as a guest',tag:'normal',done:false},
+      ]
+    },
+    {
+      id:'p6', badge:'PHASE 6', name:'Account User — Change Username', color:'purple',
+      time:'Logged-in account user',
+      overlay:'WorldSelect — Change Username dialog',
+      trigger:'Click the "Change Username" button',
+      desc:'Account user changes username in WorldSelect. Duplicate checking only queries accountNames — unrelated to playerNames. After renaming, all historical scores are updated, targeting only isAccount:true records.',
+      collapsed:false,
+      cases:[
+        {id:'p6c0',text:'WorldSelect shows "Change Username" and "Log Out" buttons for account users',tag:'normal',done:false},
+        {id:'p6c1',text:'Clicking "Change Username" opens an input box pre-filled with the current username',tag:'normal',done:false},
+        {id:'p6c2',text:'Entering the same username as the current one closes the dialog without any operation',tag:'edge',done:false},
+        {id:'p6c3',text:'Renaming to a brand-new username (not in accountNames) succeeds immediately',tag:'normal',done:false},
+        {id:'p6c4',text:'Renaming to an existing account username triggers the duplicate dialog (only checks accountNames)',tag:'normal',done:false},
+        {id:'p6c5',text:'A guest named "moosry" does not trigger the duplicate dialog when an account renames to "moosry" — namespaces are independent',tag:'normal',done:false},
+        {id:'p6c6',text:'After successful rename, localStorage playerAccount.username and playerName are both updated',tag:'normal',done:false},
+        {id:'p6c7',text:'After successful rename, the WorldSelect welcome message immediately reflects the new username',tag:'normal',done:false},
+        {id:'p6c8',text:'After rename, accountNames: new username count+1, old username count−1',tag:'normal',done:false},
+        {id:'p6c9',text:'After rename, all leaderboard entries with the old username are updated to the new username, only for isAccount:true records',tag:'normal',done:false},
+        {id:'p6c10',text:'Guest records with the same name are not affected by an account rename (namespace isolation)',tag:'normal',done:false},
+        {id:'p6c11',text:'A loading state is shown during renaming; the button cannot be clicked again while in progress',tag:'bug',done:false},
+        {id:'p6c12',text:'If rename fails, an error prompt is shown and the old username remains unchanged',tag:'bug',done:false},
+      ]
+    },
+    {
+      id:'p7', badge:'PHASE 7', name:'Namespace Isolation — Guest and Account Coexistence', color:'red',
+      time:'Guest and account with the same name exist simultaneously',
+      overlay:'System-wide',
+      trigger:'Manually construct a scenario with a same-name guest and account',
+      desc:'Guest playerNames and account accountNames are entirely independent collections that do not affect each other. A same-name guest and account user on the leaderboard are two different people, each showing their own scores. Account users have the 👑 indicator.',
+      collapsed:false,
+      cases:[
+        {id:'p7c0',text:'Guest "moosry" and account "moosry" coexist; leaderboard displays both separately, each retaining their best score',tag:'normal',done:false},
+        {id:'p7c1',text:'During leaderboard deduplication, guest moosry (isAccount:false) and account moosry (isAccount:true) do not overwrite each other',tag:'normal',done:false},
+        {id:'p7c2',text:'Account moosry shows 👑 before their name; guest moosry does not',tag:'normal',done:false},
+        {id:'p7c3',text:'A guest renaming does not affect the same-name account user\'s scores',tag:'normal',done:false},
+        {id:'p7c4',text:'An account rename only updates isAccount:true leaderboard records; guest records remain unchanged',tag:'normal',done:false},
+        {id:'p7c5',text:'When a guest registers as an account, score transfer only transfers the guest\'s records (isAccount:false) without touching the same-name account user\'s records',tag:'edge',done:false},
+        {id:'p7c6',text:'Guest "moosry" registers as account "moosry#2": playerNames moosry count decrements by 1, accountNames moosry#2 count=1',tag:'edge',done:false},
+      ]
+    },
+    {
+      id:'p8', badge:'PHASE 8', name:'Leaderboard — 👑 Badge and Account Display', color:'blue',
+      time:'Account user completes a level',
+      overlay:'WinPage / StaticPageWinEasy',
+      trigger:'Account user reaches the finish line',
+      desc:'After an account user completes a level, their name on the leaderboard shows 👑. The isAccount field is correctly written to Firebase and correctly identified when the leaderboard is read.',
+      collapsed:false,
+      cases:[
+        {id:'p8c0',text:'Score submitted by an account user contains isAccount:true',tag:'normal',done:false},
+        {id:'p8c1',text:'Score submitted by a guest contains isAccount:false',tag:'normal',done:false},
+        {id:'p8c2',text:'Account usernames on the leaderboard display 👑; guest names do not',tag:'normal',done:false},
+        {id:'p8c3',text:'"← YOU" arrow displays correctly next to the account username without being disrupted by 👑',tag:'bug',done:false},
+        {id:'p8c4',text:'"This Run Rank" and "Personal Best" display correctly after an account user completes a level',tag:'normal',done:false},
+        {id:'p8c5',text:'When the top three are all account users, 🥇🥈🥉 and 👑 both display correctly without overlapping',tag:'edge',done:false},
+        {id:'p8c6',text:'When top three are a mix of guests and accounts, display is correct — guests have no 👑, accounts do',tag:'edge',done:false},
+      ]
+    },
+    {
+      id:'p9', badge:'PHASE 9', name:'Auto-Skip and Persistence', color:'green',
+      time:'localStorage already contains a record (guest or account)',
+      overlay:'NameInputPage → WorldSelect',
+      trigger:'Close the browser and reopen',
+      desc:'Both guest and account users who reopen the game should automatically skip NameInputPage and go straight to WorldSelect, maintaining their persistent login state.',
+      collapsed:false,
+      cases:[
+        {id:'p9c0',text:'Account user closes the browser and reopens — automatically enters WorldSelect showing 👑 username',tag:'normal',done:false},
+        {id:'p9c1',text:'Guest closes the browser and reopens — automatically enters WorldSelect with a welcome message',tag:'normal',done:false},
+        {id:'p9c2',text:'Account user refreshes the page — state is not lost, still logged in as account',tag:'normal',done:false},
+        {id:'p9c3',text:'After localStorage.clear() and refresh, NameInputPage shows the three entry buttons',tag:'normal',done:false},
+        {id:'p9c4',text:'Clearing only playerAccount while keeping playerName — game enters as guest without crashing',tag:'edge',done:false},
+        {id:'p9c5',text:'playerAccount data is corrupted (manually set to invalid JSON) — app does not crash and returns to NameInputPage',tag:'bug',done:false},
+      ]
+    },
+    {
+      id:'p10', badge:'PHASE 10', name:'Edge & Stress Tests', color:'red',
+      time:'Various extreme conditions',
+      overlay:'System-wide',
+      trigger:'Manually construct abnormal scenarios',
+      desc:'Tests the robustness of the account system under extreme conditions including network errors, concurrent operations, and data corruption.',
+      collapsed:false,
+      cases:[
+        {id:'p10c0',text:'Clicking Login while offline shows an error prompt and does not crash',tag:'bug',done:false},
+        {id:'p10c1',text:'Clicking Register while offline shows an error prompt and does not crash',tag:'bug',done:false},
+        {id:'p10c2',text:'Registering with an email already used by another account shows the appropriate error prompt',tag:'edge',done:false},
+        {id:'p10c3',text:'Clicking the Login button very rapidly in succession does not send multiple duplicate requests',tag:'bug',done:false},
+        {id:'p10c4',text:'Logging in successfully when the Firestore users collection has no document for that uid does not crash and is handled gracefully',tag:'bug',done:false},
+        {id:'p10c5',text:'Network drops mid-rename with partial leaderboard updates — no data inconsistency crash',tag:'bug',done:false},
+        {id:'p10c6',text:'Two browser windows completing a level simultaneously with different accounts — both scores are correctly written',tag:'edge',done:false},
+        {id:'p10c7',text:'Password containing special characters (e.g. !@#$%) can be registered and logged in normally',tag:'edge',done:false},
+      ]
+    },
+  ]
+};
+
+const COLS={
+  purple:{c:'#7c5af6',tc:'rgba(167,139,250,0.85)'},
+  blue:  {c:'#60a5fa',tc:'rgba(147,197,253,0.85)'},
+  green: {c:'#22c97a',tc:'rgba(134,239,172,0.85)'},
+  amber: {c:'#f59e0b',tc:'rgba(253,211,77,0.85)'},
+  red:   {c:'#f05252',tc:'rgba(252,165,165,0.85)'},
+  gray:  {c:'#9ca3af',tc:'rgba(209,213,219,0.85)'},
+};
+
+let data,filter='all';
+
+function load(){try{const s=localStorage.getItem(SK);data=s?JSON.parse(s):JSON.parse(JSON.stringify(DD));}catch(e){data=JSON.parse(JSON.stringify(DD));}}
+function save(){localStorage.setItem(SK,JSON.stringify(data));showToast('✓ Saved');}
+
+function render(){
+  const con=document.getElementById('pc');con.innerHTML='';
+  data.phases.forEach(ph=>{
+    const col=COLS[ph.color]||COLS.purple;
+    const vis=ph.cases.filter(c=>filter==='all'?true:filter==='undone'?!c.done:c.tag===filter);
+    const tot=ph.cases.length,dn=ph.cases.filter(c=>c.done).length,pct=tot>0?dn/tot*100:0,allDone=dn===tot&&tot>0;
+    const d=document.createElement('div');
+    d.className='pcard'+(ph.collapsed?' col':'');
+    const detail=`<div class="pdetail">${ph.time?`<span><span class="dk">Precondition:</span><span class="dv">${ph.time}</span></span>`:''} ${ph.overlay?`<span><span class="dk">Page / Screen:</span><span class="dv">${ph.overlay}</span></span>`:''} ${ph.trigger?`<span><span class="dk">Trigger:</span><span class="dv">${ph.trigger}</span></span>`:''}</div>`;
+    const rows=vis.length===0?'<div class="empty">No cases match this filter</div>':vis.map(c=>{
+      const pill=c.tag==='normal'?'n':c.tag==='edge'?'e':'b';
+      const lbl=c.tag==='normal'?'Normal Flow':c.tag==='edge'?'Edge Case':'Potential Bug';
+      return `<div class="crow${c.done?' done':''}" onclick="toggleC('${ph.id}','${c.id}')"><div class="cbox${c.done?' on':''}"></div><div class="ccont"><div class="ctxt">${c.text}</div><span class="tpill ${pill}"><span class="tpill-dot"></span>${lbl}</span></div><div class="cacts" onclick="event.stopPropagation()"><button class="cact" onclick="editCase('${ph.id}','${c.id}')">Edit</button><button class="cact del" onclick="delC('${ph.id}','${c.id}')">Delete</button></div></div>`;
+    }).join('');
+    d.innerHTML=`<div class="ph" onclick="toggleP('${ph.id}')"><div class="stripe" style="background:${col.c};"></div><div class="ph-mid"><div class="ph-badge" style="color:${col.tc};">${ph.badge}</div><div class="ph-name">${ph.name}</div><div class="ph-prog"><div class="ph-bar"><div class="ph-fill" style="width:${pct}%;background:${col.c};"></div></div><span class="ph-frac${allDone?' all':''}">${dn} / ${tot}${allDone?' ✓':''}</span></div></div><button class="ph-edit" onclick="event.stopPropagation();editPhase('${ph.id}')">Edit</button><span class="ph-arr">▾</span></div>${detail}<div class="pbody">${rows}<div class="addwrap"><div class="addrow"><input class="ainp" id="qi-${ph.id}" placeholder="Quick add case..." onclick="event.stopPropagation()" onkeydown="if(event.key==='Enter'){event.stopPropagation();quickAdd('${ph.id}');}"><select class="asel" id="qt-${ph.id}" onclick="event.stopPropagation()"><option value="normal">Normal Flow</option><option value="edge">Edge Case</option><option value="bug">Potential Bug</option></select><button class="abtn" onclick="event.stopPropagation();quickAdd('${ph.id}')">＋</button></div></div></div>`;
+    con.appendChild(d);
+  });
+  updGlobal();
+}
+
+function toggleP(id){const p=data.phases.find(p=>p.id===id);if(p){p.collapsed=!p.collapsed;save();render();}}
+function toggleC(pid,cid){const p=data.phases.find(p=>p.id===pid);if(!p)return;const c=p.cases.find(c=>c.id===cid);if(c){c.done=!c.done;save();render();}}
+function quickAdd(pid){const i=document.getElementById('qi-'+pid),t=document.getElementById('qt-'+pid),tx=i.value.trim();if(!tx)return;const p=data.phases.find(p=>p.id===pid);if(!p)return;p.cases.push({id:'c'+Date.now(),text:tx,tag:t.value,done:false});i.value='';save();render();}
+function delC(pid,cid){if(!confirm('Delete this test case?'))return;const p=data.phases.find(p=>p.id===pid);if(p){p.cases=p.cases.filter(c=>c.id!==cid);save();render();}}
+function resetChecks(){if(!confirm('Reset all check states?'))return;data.phases.forEach(p=>p.cases.forEach(c=>c.done=false));save();render();}
+
+function updGlobal(){
+  let tot=0,dn=0,n=0,e=0,b=0;
+  data.phases.forEach(p=>p.cases.forEach(c=>{tot++;if(c.done)dn++;if(c.tag==='normal')n++;else if(c.tag==='edge')e++;else b++;}));
+  document.getElementById('dn').textContent=dn;
+  document.getElementById('dd').textContent='/ '+tot;
+  document.getElementById('dfill').style.strokeDashoffset=CIRC-(dn/Math.max(tot,1))*CIRC;
+  document.getElementById('sn').textContent=n;
+  document.getElementById('se').textContent=e;
+  document.getElementById('sb').textContent=b;
+}
+
+function setF(f,btn){filter=f;document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');render();}
+function expandAll(){data.phases.forEach(p=>p.collapsed=false);save();render();}
+function collapseAll(){data.phases.forEach(p=>p.collapsed=true);save();render();}
+
+function openAddPhase(){
+  document.getElementById('pm-t').textContent='Add Phase';
+  document.getElementById('pe-id').value='';
+  ['pb','pn','ptime','pover','ptrig','pdesc'].forEach(x=>{const el=document.getElementById(x);if(el)el.value='';});
+  document.getElementById('pcol').value='purple';
+  document.getElementById('dpb').style.display='none';
+  document.getElementById('pm').classList.add('on');
+}
+
+function editPhase(id){
+  const p=data.phases.find(p=>p.id===id);if(!p)return;
+  document.getElementById('pm-t').textContent='Edit Phase';
+  document.getElementById('pe-id').value=id;
+  document.getElementById('pb').value=p.badge||'';
+  document.getElementById('pn').value=p.name||'';
+  document.getElementById('pcol').value=p.color||'purple';
+  document.getElementById('ptime').value=p.time||'';
+  document.getElementById('pover').value=p.overlay||'';
+  document.getElementById('ptrig').value=p.trigger||'';
+  document.getElementById('pdesc').value=p.desc||'';
+  document.getElementById('dpb').style.display='inline-block';
+  document.getElementById('pm').classList.add('on');
+}
+
+function savePhase(){
+  const id=document.getElementById('pe-id').value;
+  const pd={badge:document.getElementById('pb').value.trim()||'PHASE',name:document.getElementById('pn').value.trim()||'New Phase',color:document.getElementById('pcol').value,time:document.getElementById('ptime').value.trim(),overlay:document.getElementById('pover').value.trim(),trigger:document.getElementById('ptrig').value.trim(),desc:document.getElementById('pdesc').value.trim()};
+  if(id){const p=data.phases.find(p=>p.id===id);if(p)Object.assign(p,pd);}
+  else data.phases.push({id:'p'+Date.now(),cases:[],collapsed:false,...pd});
+  save();render();closeM('pm');
+}
+
+function delPhase(){
+  const id=document.getElementById('pe-id').value;
+  if(!id||!confirm('Delete this phase and all its cases?'))return;
+  data.phases=data.phases.filter(p=>p.id!==id);
+  save();render();closeM('pm');
+}
+
+function editCase(pid,cid){
+  const p=data.phases.find(p=>p.id===pid);if(!p)return;
+  const c=p.cases.find(c=>c.id===cid);if(!c)return;
+  document.getElementById('cm-t').textContent='Edit Case';
+  document.getElementById('ce-ph').value=pid;
+  document.getElementById('ce-id').value=cid;
+  document.getElementById('ct').value=c.text;
+  document.getElementById('ctag').value=c.tag;
+  document.getElementById('cpsel').innerHTML=data.phases.map(pp=>`<option value="${pp.id}"${pp.id===pid?' selected':''}>${pp.badge} ${pp.name}</option>`).join('');
+  document.getElementById('dcb').style.display='inline-block';
+  document.getElementById('cm').classList.add('on');
+}
+
+function saveCase(){
+  const pid=document.getElementById('ce-ph').value,cid=document.getElementById('ce-id').value,npid=document.getElementById('cpsel').value,tx=document.getElementById('ct').value.trim(),tag=document.getElementById('ctag').value;
+  if(!tx)return;
+  if(cid){const p=data.phases.find(p=>p.id===pid),c=p?.cases.find(c=>c.id===cid);if(c){c.text=tx;c.tag=tag;if(npid!==pid){p.cases=p.cases.filter(cc=>cc.id!==cid);const np=data.phases.find(p=>p.id===npid);if(np)np.cases.push(c);}}}
+  save();render();closeM('cm');
+}
+
+function delCase(){
+  const pid=document.getElementById('ce-ph').value,cid=document.getElementById('ce-id').value;
+  if(!confirm('Delete this case?'))return;
+  const p=data.phases.find(p=>p.id===pid);
+  if(p)p.cases=p.cases.filter(c=>c.id!==cid);
+  save();render();closeM('cm');
+}
+
+function closeM(id){document.getElementById(id).classList.remove('on');}
+document.querySelectorAll('.mback').forEach(b=>b.addEventListener('click',e=>{if(e.target===b)b.classList.remove('on');}));
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(()=>t.style.display='none',1500);}
+
+function doExport(){
+  const snapshot=JSON.stringify(data);
+  const fullHTML=document.documentElement.outerHTML;
+  const patched=fullHTML.replace(
+    /function load\(\)\{.*?\}/,
+    `function load(){try{const s=localStorage.getItem(SK);data=s?JSON.parse(s):JSON.parse(${JSON.stringify(snapshot)});}catch(e){data=JSON.parse(${JSON.stringify(snapshot)});}}`
+  );
+  const a=document.createElement('a');
+  a.href='data:text/html;charset=utf-8,'+encodeURIComponent(patched);
+  a.download='Account_System_Test_Checklist_'+new Date().toISOString().slice(0,10)+'.html';
+  a.click();
+  showToast('✓ Exported');
+}
+
+load();render();
+</script>
+</body>
+</html>

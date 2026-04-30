@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tutorial System Test Checklist · EasyLevel1</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#f0f0f5;--white:#fff;--dark2:#16161f;--dark3:#1c1c28;
+  --border:#e2e2ec;--text:#111118;--mid:#6b6b88;--dim:rgba(200,190,240,0.5);
+  --lt:#f0eeff;--purple:#7c5af6;--pdim:rgba(124,90,246,0.1);
+  --green:#16a34a;--gbg:#dcfce7;--gtxt:#15803d;
+  --amber:#b45309;--abg:#fef3c7;--atxt:#92400e;
+  --red:#dc2626;--rbg:#fee2e2;--rtxt:#991b1b;
+  --f:'IBM Plex Sans',Helvetica,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+}
+body{background:var(--bg);font-family:var(--f);color:var(--text);padding:20px 16px 60px;}
+.wrap{max-width:700px;margin:0 auto;}
+.top{background:var(--dark2);border-radius:16px;padding:20px 22px;display:flex;align-items:center;gap:18px;margin-bottom:12px;}
+.top-left{flex:1;min-width:0;}
+.top-eye{font-family:var(--mono);font-size:9px;color:rgba(124,90,246,0.8);letter-spacing:.14em;text-transform:uppercase;margin-bottom:5px;}
+.top-title{font-size:20px;font-weight:700;color:var(--lt);letter-spacing:-.3px;}
+.donut-wrap{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.donut{position:relative;width:80px;height:80px;}
+.donut svg{width:80px;height:80px;transform:rotate(-90deg);}
+.d-bg{fill:none;stroke:rgba(255,255,255,0.07);stroke-width:6;}
+.d-fill{fill:none;stroke:var(--purple);stroke-width:6;stroke-linecap:round;stroke-dasharray:207.3;stroke-dashoffset:207.3;transition:stroke-dashoffset .5s ease;}
+.donut-c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;}
+.donut-n{font-family:var(--mono);font-size:26px;font-weight:500;color:var(--lt);line-height:1;}
+.donut-d{font-family:var(--mono);font-size:12px;color:var(--dim);line-height:1;}
+.donut-lbl{font-size:10px;color:var(--dim);letter-spacing:.04em;}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+.sc{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:11px 13px;display:flex;align-items:center;gap:9px;}
+.sc-ico{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.sc-ico.n{background:var(--gbg);}.sc-ico.e{background:var(--abg);}.sc-ico.b{background:var(--rbg);}
+.sc-num{font-family:var(--mono);font-size:18px;font-weight:500;color:var(--text);line-height:1;}
+.sc-lbl{font-size:11px;color:var(--mid);margin-top:1px;}
+.toolbar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:14px;}
+.tbtn{padding:7px 13px;border-radius:8px;border:1px solid var(--border);background:var(--white);color:var(--text);font-family:var(--f);font-size:12px;font-weight:500;cursor:pointer;transition:all .14s;}
+.tbtn:hover{border-color:rgba(124,90,246,.35);background:var(--pdim);}
+.tbtn.pri{background:var(--purple);border-color:var(--purple);color:#fff;}
+.tbtn.pri:hover{opacity:.88;}
+.fgroup{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap;}
+.fbtn{padding:5px 11px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--mid);font-family:var(--f);font-size:11px;font-weight:500;cursor:pointer;transition:all .14s;}
+.fbtn:hover,.fbtn.on{background:var(--pdim);color:var(--purple);border-color:rgba(124,90,246,.3);}
+.pcard{margin-bottom:8px;border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.06);}
+.ph{background:var(--dark2);padding:14px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none;transition:background .14s;border-bottom:1px solid rgba(255,255,255,0.04);}
+.pcard.col .ph{border-bottom:none;}
+.ph:hover{background:var(--dark3);}
+.stripe{width:4px;height:34px;border-radius:2px;flex-shrink:0;}
+.ph-mid{flex:1;min-width:0;}
+.ph-badge{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px;}
+.ph-name{font-size:14px;font-weight:600;color:var(--lt);line-height:1.25;}
+.ph-prog{display:flex;align-items:center;gap:8px;margin-top:5px;}
+.ph-bar{flex:1;max-width:120px;height:3px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;}
+.ph-fill{height:100%;border-radius:2px;transition:width .4s;}
+.ph-frac{font-family:var(--mono);font-size:10px;color:var(--dim);}
+.ph-frac.all{color:#22c97a;}
+.ph-arr{font-size:11px;color:rgba(255,255,255,0.25);transition:transform .2s;margin-left:6px;}
+.pcard.col .ph-arr{transform:rotate(-90deg);}
+.ph-edit{font-size:10px;padding:2px 8px;border-radius:5px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.3);cursor:pointer;opacity:0;transition:opacity .14s;font-family:var(--f);}
+.ph:hover .ph-edit{opacity:1;}
+.ph-edit:hover{color:var(--lt);border-color:rgba(255,255,255,0.25);}
+.pdetail{background:var(--dark3);padding:7px 18px;display:flex;gap:14px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,0.04);}
+.dk{font-size:11px;font-weight:600;color:rgba(160,150,210,0.5);margin-right:3px;}
+.dv{font-size:11px;color:rgba(200,190,240,0.7);}
+.pbody{background:var(--white);border:1px solid var(--border);border-top:none;}
+.pcard.col .pbody,.pcard.col .pdetail{display:none;}
+.crow{display:flex;align-items:flex-start;gap:12px;padding:12px 18px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s;}
+.crow:last-of-type{border-bottom:none;}
+.crow:hover{background:#fafafa;}
+.crow.done{opacity:.42;}
+.cbox{width:22px;height:22px;border-radius:6px;border:2px solid #d4d4e8;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.crow:hover .cbox{border-color:var(--purple);}
+.cbox.on{background:var(--purple);border-color:var(--purple);}
+.cbox.on::after{content:'✓';font-size:12px;color:#fff;font-weight:700;}
+.ccont{flex:1;min-width:0;}
+.ctxt{font-size:13px;color:var(--text);line-height:1.55;}
+.done .ctxt{text-decoration:line-through;color:var(--mid);}
+.tpill{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;padding:2px 9px;border-radius:999px;margin-top:5px;}
+.tpill.n{background:var(--gbg);color:var(--gtxt);}.tpill.e{background:var(--abg);color:var(--atxt);}.tpill.b{background:var(--rbg);color:var(--rtxt);}
+.tpill-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.tpill.n .tpill-dot{background:var(--green);}.tpill.e .tpill-dot{background:var(--amber);}.tpill.b .tpill-dot{background:var(--red);}
+.cacts{display:flex;gap:3px;flex-shrink:0;opacity:0;transition:opacity .14s;}
+.crow:hover .cacts{opacity:1;}
+.cact{font-size:10px;padding:3px 8px;border-radius:5px;border:1px solid var(--border);background:#f5f5f8;color:var(--mid);cursor:pointer;font-family:var(--f);transition:all .1s;}
+.cact:hover{color:var(--text);border-color:#c8c8dc;}
+.cact.del:hover{color:var(--red);border-color:rgba(220,38,38,.3);}
+.addwrap{background:#fafafa;border-top:1px solid var(--border);padding:9px 18px;}
+.addrow{display:flex;gap:7px;}
+.ainp{flex:1;background:var(--white);border:1px solid var(--border);border-radius:8px;padding:7px 11px;font-family:var(--f);font-size:13px;color:var(--text);outline:none;transition:border-color .14s;}
+.ainp:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(124,90,246,.08);}
+.ainp::placeholder{color:#b8b8d0;}
+.asel{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:7px 9px;font-family:var(--f);font-size:11px;font-weight:500;color:var(--mid);outline:none;cursor:pointer;}
+.abtn{padding:7px 14px;border-radius:8px;border:none;background:var(--purple);color:#fff;font-family:var(--f);font-size:12px;font-weight:600;cursor:pointer;}
+.abtn:hover{opacity:.88;}
+.empty{padding:14px 18px;text-align:center;font-size:12px;color:var(--mid);}
+.mback{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(3px);}
+.mback.on{display:flex;}
+.modal{background:#fff;border:1px solid var(--border);border-radius:16px;padding:26px;width:460px;max-width:92vw;box-shadow:0 20px 60px rgba(0,0,0,0.15);}
+.modal h2{font-size:18px;font-weight:700;color:var(--text);margin-bottom:18px;letter-spacing:-.3px;}
+.fg{margin-bottom:12px;}
+.fl{font-size:11px;font-weight:600;color:var(--mid);display:block;margin-bottom:4px;letter-spacing:.04em;}
+.fi,.fs,.fta{width:100%;background:#f7f7fb;border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-family:var(--f);font-size:13px;color:var(--text);outline:none;transition:border-color .14s;}
+.fi:focus,.fs:focus,.fta:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(124,90,246,.08);}
+.fi::placeholder,.fta::placeholder{color:#b8b8d0;}
+.fta{resize:vertical;min-height:56px;}
+.fs{cursor:pointer;}
+.frow{display:flex;gap:8px;margin-top:18px;}
+.toast{position:fixed;bottom:22px;right:22px;background:var(--dark2);color:var(--lt);font-size:12px;font-weight:500;padding:10px 16px;border-radius:10px;display:none;z-index:300;animation:sup .2s ease;}
+@keyframes sup{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="top">
+  <div class="top-left">
+    <div class="top-eye">EasyLevel1 · Tutorial System</div>
+    <div class="top-title">Tutorial System Test Checklist</div>
+  </div>
+  <div class="donut-wrap">
+    <div class="donut">
+      <svg viewBox="0 0 80 80"><circle class="d-bg" cx="40" cy="40" r="33"/><circle class="d-fill" id="dfill" cx="40" cy="40" r="33"/></svg>
+      <div class="donut-c"><div class="donut-n" id="dn">0</div><div class="donut-d" id="dd">/ 0</div></div>
+    </div>
+    <div class="donut-lbl">Passed</div>
+  </div>
+</div>
+<div class="stats">
+  <div class="sc"><div class="sc-ico n">✓</div><div><div class="sc-num" id="sn">0</div><div class="sc-lbl">Normal Flow</div></div></div>
+  <div class="sc"><div class="sc-ico e">△</div><div><div class="sc-num" id="se">0</div><div class="sc-lbl">Edge Cases</div></div></div>
+  <div class="sc"><div class="sc-ico b">!</div><div><div class="sc-num" id="sb">0</div><div class="sc-lbl">Potential Bugs</div></div></div>
+</div>
+<div class="toolbar">
+  <button class="tbtn pri" onclick="openAddPhase()">＋ Add Phase</button>
+  <button class="tbtn" onclick="expandAll()">Expand All</button>
+  <button class="tbtn" onclick="collapseAll()">Collapse All</button>
+  <button class="tbtn" onclick="resetChecks()">Reset Checks</button>
+  <button class="tbtn pri" onclick="doExport()">⬇ Export HTML</button>
+  <div class="fgroup">
+    <button class="fbtn on" onclick="setF('all',this)">All</button>
+    <button class="fbtn" onclick="setF('normal',this)">Normal</button>
+    <button class="fbtn" onclick="setF('edge',this)">Edge</button>
+    <button class="fbtn" onclick="setF('bug',this)">Bug</button>
+    <button class="fbtn" onclick="setF('undone',this)">Incomplete</button>
+  </div>
+</div>
+<div id="pc"></div>
+</div>
+
+<!-- Phase Modal -->
+<div class="mback" id="pm">
+  <div class="modal">
+    <h2 id="pm-t">Add Phase</h2><input type="hidden" id="pe-id">
+    <div class="fg"><label class="fl">Phase ID</label><input class="fi" id="pb" placeholder="PHASE 1"></div>
+    <div class="fg"><label class="fl">Phase Name</label><input class="fi" id="pn" placeholder="Guide Recording Button"></div>
+    <div class="fg"><label class="fl">Colour</label><select class="fs" id="pcol"><option value="purple">Purple</option><option value="blue">Blue</option><option value="green">Green</option><option value="amber">Amber</option><option value="red">Red</option><option value="gray">Gray</option></select></div>
+    <div class="fg"><label class="fl">Game Time State</label><input class="fi" id="ptime" placeholder="Paused / Running"></div>
+    <div class="fg"><label class="fl">Overlay / Screen</label><input class="fi" id="pover" placeholder="Full-screen overlay, Recording UI cutout"></div>
+    <div class="fg"><label class="fl">Trigger (to next phase)</label><input class="fi" id="ptrig" placeholder="Player presses Record key C"></div>
+    <div class="fg"><label class="fl">Description</label><textarea class="fta" id="pdesc" placeholder="Main purpose of this phase..."></textarea></div>
+    <div class="frow">
+      <button class="tbtn pri" onclick="savePhase()">Save</button>
+      <button class="tbtn" onclick="closeM('pm')">Cancel</button>
+      <button class="tbtn" id="dpb" style="margin-left:auto;display:none;color:var(--red);border-color:rgba(220,38,38,.3);" onclick="delPhase()">Delete Phase</button>
+    </div>
+  </div>
+</div>
+
+<!-- Case Modal -->
+<div class="mback" id="cm">
+  <div class="modal">
+    <h2 id="cm-t">Edit Case</h2>
+    <input type="hidden" id="ce-ph"><input type="hidden" id="ce-id">
+    <div class="fg"><label class="fl">Test Content</label><textarea class="fta" id="ct" placeholder="Describe what this test case verifies..." style="min-height:72px;"></textarea></div>
+    <div class="fg"><label class="fl">Phase</label><select class="fs" id="cpsel"></select></div>
+    <div class="fg"><label class="fl">Type</label><select class="fs" id="ctag"><option value="normal">Normal Flow — main path, must pass</option><option value="edge">Edge Case — non-standard operation</option><option value="bug">Potential Bug — prone to code issues</option></select></div>
+    <div class="frow">
+      <button class="tbtn pri" onclick="saveCase()">Save</button>
+      <button class="tbtn" onclick="closeM('cm')">Cancel</button>
+      <button class="tbtn" id="dcb" style="margin-left:auto;display:none;color:var(--red);border-color:rgba(220,38,38,.3);" onclick="delCase()">Delete Case</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">✓ Saved</div>
+
+<script>
+const SK='tutorial_test_checklist_v1';
+const CIRC=2*Math.PI*33;
+
+const DD={
+  phases:[
+    {
+      id:'p0', badge:'PHASE 0', name:'Idle State (Tutorial Not Started)', color:'gray',
+      time:'Game running normally', overlay:'No overlay',
+      trigger:'Player clicks the "Start Tutorial" button on the signboard',
+      desc:'Player is playing EasyLevel1 normally. The signboard permanently shows a "Start Tutorial" button with no tutorial UI visible. Recording and playback function completely normally during this state.',
+      collapsed:false,
+      cases:[
+        {id:'p0c0',text:'On entering EasyLevel1, the signboard correctly displays the "Start Tutorial" button',tag:'normal',done:false},
+        {id:'p0c1',text:'In idle state, no overlay and no tutorial prompt boxes appear on screen',tag:'normal',done:false},
+        {id:'p0c2',text:'In idle state, pressing C (Record key) records normally without triggering the tutorial flow',tag:'edge',done:false},
+        {id:'p0c3',text:'In idle state, ESC opens the pause menu normally (not intercepted by the tutorial)',tag:'normal',done:false},
+        {id:'p0c4',text:'Player manually completes a recording, then clicks "Start Tutorial" — tutorial starts normally and old recording data is cleaned up',tag:'edge',done:false},
+      ]
+    },
+    {
+      id:'p1', badge:'PHASE 1', name:'Guide: Recording Button', color:'purple',
+      time:'Game time paused',
+      overlay:'Full-screen semi-transparent overlay · Only the Recording UI area is cut out',
+      trigger:'Player presses the Record key (default C) → enters PHASE 2',
+      desc:'Game pauses, a full-screen overlay covers everything, only the Recording UI panel is highlighted through a cutout. A prompt appears next to the Recording UI: "Follow the instructions on this Recording UI to start recording!" Player presses C to proceed to the next phase.',
+      collapsed:false,
+      cases:[
+        {id:'p1c0',text:'After clicking "Start Tutorial", game time immediately pauses (character does not move, timer stops)',tag:'normal',done:false},
+        {id:'p1c1',text:'After clicking "Start Tutorial", a full-screen semi-transparent overlay appears',tag:'normal',done:false},
+        {id:'p1c2',text:'The Recording UI area is cut out and visible; all other areas are covered by the overlay — position is accurate with no offset',tag:'normal',done:false},
+        {id:'p1c3',text:'Prompt text appears next to the Recording UI: "Follow the instructions on this Recording UI to start recording!"',tag:'normal',done:false},
+        {id:'p1c4',text:'Top-right corner shows "Press ESC to skip tutorial" hint',tag:'normal',done:false},
+        {id:'p1c5',text:'Pressing C successfully transitions to PHASE 2',tag:'normal',done:false},
+        {id:'p1c6',text:'Pressing other unrelated keys (arrow keys, space, etc.) does not trigger a phase transition',tag:'edge',done:false},
+        {id:'p1c7',text:'In PHASE 1, pressing ESC does not open the pause menu — it skips the tutorial and returns to the normal state',tag:'normal',done:false},
+        {id:'p1c8',text:'After ESC skip, game time resumes normally and the pause menu can be opened',tag:'bug',done:false},
+        {id:'p1c9',text:'After window resize, the overlay and cutout positions automatically update and realign with no offset',tag:'edge',done:false},
+      ]
+    },
+    {
+      id:'p2', badge:'PHASE 2', name:'Guide: Understanding the Timeline', color:'blue',
+      time:'Game time paused',
+      overlay:'Full-screen semi-transparent overlay · Only the Timeline area is cut out',
+      trigger:'Player presses a movement key / jump key / any key → enters PHASE 3 (recording officially begins)',
+      desc:'The overlay cutout switches from the Recording UI to the Timeline. Prompt text: "You have 5 seconds to record your actions — press any movement or jump key to continue!" When the player presses a move/jump key, game time resumes and recording officially starts.',
+      collapsed:false,
+      cases:[
+        {id:'p2c0',text:'On entering PHASE 2, game time is still paused',tag:'normal',done:false},
+        {id:'p2c1',text:'The cutout switches to the Timeline area (the Recording UI is covered again)',tag:'normal',done:false},
+        {id:'p2c2',text:'Prompt text updates to "You have 5 seconds to record your actions — press any movement or jump key to continue!"',tag:'normal',done:false},
+        {id:'p2c3',text:'Pressing Left Arrow / A triggers transition to PHASE 3',tag:'normal',done:false},
+        {id:'p2c4',text:'Pressing Right Arrow / D triggers transition to PHASE 3',tag:'normal',done:false},
+        {id:'p2c5',text:'Pressing the jump key (Space) triggers transition to PHASE 3',tag:'normal',done:false},
+        {id:'p2c6',text:'When the trigger key is pressed, the character does not move (key is intercepted by the tutorial, not passed to the character controller)',tag:'edge',done:false},
+        {id:'p2c7',text:'In PHASE 2, pressing C does not trigger recording or any phase transition',tag:'edge',done:false},
+        {id:'p2c8',text:'In PHASE 2, pressing ESC to skip restores game time to normal',tag:'normal',done:false},
+      ]
+    },
+    {
+      id:'p3', badge:'PHASE 3', name:'Recording in Progress', color:'green',
+      time:'Game time resumes, recording starts',
+      overlay:'No overlay — full screen displays normally',
+      trigger:'Recording timer reaches 5s and auto-ends / Player presses C to end early → enters PHASE 4',
+      desc:'Game fully resumes, the timeline starts counting, and recording is underway (maximum 5 seconds). A prominent prompt appears next to the Recording UI: "You can stop recording early, or wait for it to finish automatically after 5 seconds." After recording ends, the game auto-pauses and enters PHASE 4.',
+      collapsed:false,
+      cases:[
+        {id:'p3c0',text:'On entering PHASE 3, game time immediately resumes',tag:'normal',done:false},
+        {id:'p3c1',text:'The overlay disappears completely — full screen displays normally',tag:'normal',done:false},
+        {id:'p3c2',text:'The timeline starts counting and recording proceeds normally',tag:'normal',done:false},
+        {id:'p3c3',text:'A prominent prompt appears next to the Recording UI: "You can stop recording early, or wait for it to finish automatically after 5 seconds."',tag:'normal',done:false},
+        {id:'p3c4',text:'After 5 seconds, recording ends automatically and transitions to PHASE 4',tag:'normal',done:false},
+        {id:'p3c5',text:'Pressing C before 5 seconds ends recording early and correctly transitions to PHASE 4',tag:'normal',done:false},
+        {id:'p3c6',text:'Player does nothing for the full duration (empty 5s recording) — tutorial correctly enters PHASE 4',tag:'edge',done:false},
+        {id:'p3c7',text:'In PHASE 3, pressing ESC to skip aborts recording with no residual state left behind',tag:'edge',done:false},
+      ]
+    },
+    {
+      id:'p4', badge:'PHASE 4', name:'Recording Complete — Guide Playback', color:'amber',
+      time:'Game time paused',
+      overlay:'Full-screen overlay · Three areas simultaneously cut out: Recording UI + Timeline + Ghost (signboard position)',
+      trigger:'Player presses the Playback key (default R) → enters PHASE 5',
+      desc:'After recording, the game auto-pauses and the overlay appears with three cutouts simultaneously. Each cutout has a prompt: next to the Recording UI — "Follow this key prompt to start playback!"; next to the ghost — "You have captured your spawn-point actions!"; next to the Timeline — "You have captured your own actions!"',
+      collapsed:false,
+      cases:[
+        {id:'p4c0',text:'On entering PHASE 4, game time pauses',tag:'normal',done:false},
+        {id:'p4c1',text:'Full-screen overlay appears with three simultaneous cutouts: Recording UI, Timeline, and signboard (ghost position)',tag:'normal',done:false},
+        {id:'p4c2',text:'All three cutout areas are positioned accurately — no occlusion or offset',tag:'normal',done:false},
+        {id:'p4c3',text:'Prompt next to Recording UI reads: "Follow this key prompt to start playback!"',tag:'normal',done:false},
+        {id:'p4c4',text:'Prompt next to ghost (signboard position) reads: "You have captured your spawn-point actions!"',tag:'normal',done:false},
+        {id:'p4c5',text:'Prompt next to Timeline reads: "You have captured your own actions!"',tag:'normal',done:false},
+        {id:'p4c6',text:'All three label texts appear simultaneously without overlapping each other',tag:'normal',done:false},
+        {id:'p4c7',text:'Pressing R (Playback key) successfully transitions to PHASE 5',tag:'normal',done:false},
+        {id:'p4c8',text:'Pressing other keys does not trigger a transition',tag:'edge',done:false},
+        {id:'p4c9',text:'In PHASE 4, pressing ESC to skip correctly cleans up the recorded ghost data — no residual state',tag:'bug',done:false},
+      ]
+    },
+    {
+      id:'p5', badge:'PHASE 5', name:'Playback in Progress', color:'amber',
+      time:'Game time resumes, ghost begins playback',
+      overlay:'No overlay — full screen displays normally',
+      trigger:'Playback ends after 5s / Player presses R to interrupt manually → enters PHASE 6',
+      desc:'Game resumes, the ghost replays the recorded actions. A prompt next to the Recording UI reads: "You can also interrupt playback at any time here!"; near the ghost: "Your ghost is now replaying the actions you captured!"',
+      collapsed:false,
+      cases:[
+        {id:'p5c0',text:'On entering PHASE 5, game time resumes',tag:'normal',done:false},
+        {id:'p5c1',text:'The overlay disappears completely — full screen displays normally',tag:'normal',done:false},
+        {id:'p5c2',text:'The ghost starts replaying the recorded actions',tag:'normal',done:false},
+        {id:'p5c3',text:'Prompt next to Recording UI reads: "You can also interrupt playback at any time here!"',tag:'normal',done:false},
+        {id:'p5c4',text:'Prompt near the ghost reads: "Your ghost is now replaying the actions you captured!"',tag:'normal',done:false},
+        {id:'p5c5',text:'After 5 seconds, playback ends automatically and transitions to PHASE 6',tag:'normal',done:false},
+        {id:'p5c6',text:'Pressing R manually interrupts playback and transitions to PHASE 6',tag:'normal',done:false},
+        {id:'p5c7',text:'If the player did nothing in PHASE 3 (empty recording), the ghost appears at the correct position and stays still in PHASE 5',tag:'edge',done:false},
+        {id:'p5c8',text:'In PHASE 5, pressing ESC to skip aborts playback and the ghost disappears',tag:'edge',done:false},
+      ]
+    },
+    {
+      id:'p6', badge:'PHASE 6', name:'Tutorial Complete', color:'green',
+      time:'Game time returns to normal',
+      overlay:'No overlay',
+      trigger:'Auto-dismisses after 3 seconds / Player clicks close → returns to PHASE 0 (normal play)',
+      desc:'A toast popup appears in the centre of the screen: "You have completed the tutorial! Use your skills to beat the level!" It auto-dismisses after 3 seconds and the player returns to fully normal gameplay. The signboard still shows the "Start Tutorial" button and can be triggered again at any time.',
+      collapsed:false,
+      cases:[
+        {id:'p6c0',text:'On entering PHASE 6, no overlay appears and game time returns to normal',tag:'normal',done:false},
+        {id:'p6c1',text:'A popup appears in the centre of the screen: "You have completed the tutorial! Use your skills to beat the level!"',tag:'normal',done:false},
+        {id:'p6c2',text:'After 3 seconds, the popup auto-dismisses and normal gameplay resumes',tag:'normal',done:false},
+        {id:'p6c3',text:'After the tutorial ends, the signboard still shows the "Start Tutorial" button',tag:'normal',done:false},
+        {id:'p6c4',text:'After the tutorial ends, ESC opens the pause menu normally',tag:'normal',done:false},
+        {id:'p6c5',text:'After the tutorial ends, C/R keys record and play back normally — not intercepted by tutorial logic',tag:'normal',done:false},
+        {id:'p6c6',text:'Clicking "Start Tutorial" again restarts from PHASE 1 — no state from the previous run is left behind',tag:'normal',done:false},
+        {id:'p6c7',text:'Running two complete tutorial sessions back-to-back — the second session behaves identically to the first',tag:'edge',done:false},
+      ]
+    },
+    {
+      id:'pg', badge:'GLOBAL', name:'Edge & Exception Cases', color:'red',
+      time:'Any phase',
+      overlay:'Depends on phase',
+      trigger:'—',
+      desc:'Cross-phase global test cases covering language switching, page refresh, window resizing, and state residuals. Also a good place to log new bugs or unexpected behaviours discovered during testing.',
+      collapsed:false,
+      cases:[
+        {id:'pgc0',text:'Switching language (Chinese/English) during any tutorial phase — all prompt texts update in real time',tag:'edge',done:false},
+        {id:'pgc1',text:'Refreshing the page during the tutorial — re-entering the level starts with a clean state (no residual tutorial state)',tag:'edge',done:false},
+        {id:'pgc2',text:'Resizing the browser window during the tutorial — overlay cutout areas automatically re-align',tag:'edge',done:false},
+        {id:'pgc3',text:'RecordSystem does not respond to normal key presses during the tutorial (setDisabled is effective)',tag:'bug',done:false},
+        {id:'pgc4',text:'RecordSystem.setDisabled(false) correctly restores functionality after the tutorial ends',tag:'bug',done:false},
+        {id:'pgc5',text:'The signboard close event (TUTORIAL_CLOSE_SIGNBOARD) is correctly dispatched when the tutorial begins',tag:'bug',done:false},
+        {id:'pgc6',text:'The pause menu disable flag window._tutorialPauseMenuDisabled is cleared to false after the tutorial ends',tag:'bug',done:false},
+      ]
+    },
+  ]
+};
+
+const COLS={
+  purple:{c:'#7c5af6',tc:'rgba(167,139,250,0.85)'},
+  blue:  {c:'#60a5fa',tc:'rgba(147,197,253,0.85)'},
+  green: {c:'#22c97a',tc:'rgba(134,239,172,0.85)'},
+  amber: {c:'#f59e0b',tc:'rgba(253,211,77,0.85)'},
+  red:   {c:'#f05252',tc:'rgba(252,165,165,0.85)'},
+  gray:  {c:'#9ca3af',tc:'rgba(209,213,219,0.85)'},
+};
+
+let data,filter='all';
+
+function load(){try{const s=localStorage.getItem(SK);data=s?JSON.parse(s):JSON.parse(JSON.stringify(DD));}catch(e){data=JSON.parse(JSON.stringify(DD));}}
+function save(){localStorage.setItem(SK,JSON.stringify(data));showToast('✓ Saved');}
+
+function render(){
+  const con=document.getElementById('pc');con.innerHTML='';
+  data.phases.forEach(ph=>{
+    const col=COLS[ph.color]||COLS.purple;
+    const vis=ph.cases.filter(c=>filter==='all'?true:filter==='undone'?!c.done:c.tag===filter);
+    const tot=ph.cases.length,dn=ph.cases.filter(c=>c.done).length,pct=tot>0?dn/tot*100:0,allDone=dn===tot&&tot>0;
+    const d=document.createElement('div');
+    d.className='pcard'+(ph.collapsed?' col':'');
+    const detail=`<div class="pdetail">${ph.time?`<span><span class="dk">Time:</span><span class="dv">${ph.time}</span></span>`:''} ${ph.overlay?`<span><span class="dk">Overlay:</span><span class="dv">${ph.overlay}</span></span>`:''} ${ph.trigger?`<span><span class="dk">Trigger:</span><span class="dv">${ph.trigger}</span></span>`:''}</div>`;
+    const rows=vis.length===0?'<div class="empty">No cases match this filter</div>':vis.map(c=>{
+      const pill=c.tag==='normal'?'n':c.tag==='edge'?'e':'b';
+      const lbl=c.tag==='normal'?'Normal Flow':c.tag==='edge'?'Edge Case':'Potential Bug';
+      return `<div class="crow${c.done?' done':''}" onclick="toggleC('${ph.id}','${c.id}')"><div class="cbox${c.done?' on':''}"></div><div class="ccont"><div class="ctxt">${c.text}</div><span class="tpill ${pill}"><span class="tpill-dot"></span>${lbl}</span></div><div class="cacts" onclick="event.stopPropagation()"><button class="cact" onclick="editCase('${ph.id}','${c.id}')">Edit</button><button class="cact del" onclick="delC('${ph.id}','${c.id}')">Delete</button></div></div>`;
+    }).join('');
+    d.innerHTML=`<div class="ph" onclick="toggleP('${ph.id}')"><div class="stripe" style="background:${col.c};"></div><div class="ph-mid"><div class="ph-badge" style="color:${col.tc};">${ph.badge}</div><div class="ph-name">${ph.name}</div><div class="ph-prog"><div class="ph-bar"><div class="ph-fill" style="width:${pct}%;background:${col.c};"></div></div><span class="ph-frac${allDone?' all':''}">${dn} / ${tot}${allDone?' ✓':''}</span></div></div><button class="ph-edit" onclick="event.stopPropagation();editPhase('${ph.id}')">Edit</button><span class="ph-arr">▾</span></div>${detail}<div class="pbody">${rows}<div class="addwrap"><div class="addrow"><input class="ainp" id="qi-${ph.id}" placeholder="Quick add case..." onclick="event.stopPropagation()" onkeydown="if(event.key==='Enter'){event.stopPropagation();quickAdd('${ph.id}');}"><select class="asel" id="qt-${ph.id}" onclick="event.stopPropagation()"><option value="normal">Normal Flow</option><option value="edge">Edge Case</option><option value="bug">Potential Bug</option></select><button class="abtn" onclick="event.stopPropagation();quickAdd('${ph.id}')">＋</button></div></div></div>`;
+    con.appendChild(d);
+  });
+  updGlobal();
+}
+
+function toggleP(id){const p=data.phases.find(p=>p.id===id);if(p){p.collapsed=!p.collapsed;save();render();}}
+function toggleC(pid,cid){const p=data.phases.find(p=>p.id===pid);if(!p)return;const c=p.cases.find(c=>c.id===cid);if(c){c.done=!c.done;save();render();}}
+function quickAdd(pid){const i=document.getElementById('qi-'+pid),t=document.getElementById('qt-'+pid),tx=i.value.trim();if(!tx)return;const p=data.phases.find(p=>p.id===pid);if(!p)return;p.cases.push({id:'c'+Date.now(),text:tx,tag:t.value,done:false});i.value='';save();render();}
+function delC(pid,cid){if(!confirm('Delete this test case?'))return;const p=data.phases.find(p=>p.id===pid);if(p){p.cases=p.cases.filter(c=>c.id!==cid);save();render();}}
+function resetChecks(){if(!confirm('Reset all check states?'))return;data.phases.forEach(p=>p.cases.forEach(c=>c.done=false));save();render();}
+
+function updGlobal(){
+  let tot=0,dn=0,n=0,e=0,b=0;
+  data.phases.forEach(p=>p.cases.forEach(c=>{tot++;if(c.done)dn++;if(c.tag==='normal')n++;else if(c.tag==='edge')e++;else b++;}));
+  document.getElementById('dn').textContent=dn;
+  document.getElementById('dd').textContent='/ '+tot;
+  document.getElementById('dfill').style.strokeDashoffset=CIRC-(dn/Math.max(tot,1))*CIRC;
+  document.getElementById('sn').textContent=n;
+  document.getElementById('se').textContent=e;
+  document.getElementById('sb').textContent=b;
+}
+
+function setF(f,btn){filter=f;document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');render();}
+function expandAll(){data.phases.forEach(p=>p.collapsed=false);save();render();}
+function collapseAll(){data.phases.forEach(p=>p.collapsed=true);save();render();}
+
+function openAddPhase(){
+  document.getElementById('pm-t').textContent='Add Phase';
+  document.getElementById('pe-id').value='';
+  ['pb','pn','ptime','pover','ptrig','pdesc'].forEach(x=>{const el=document.getElementById(x);if(el)el.value='';});
+  document.getElementById('pcol').value='purple';
+  document.getElementById('dpb').style.display='none';
+  document.getElementById('pm').classList.add('on');
+}
+
+function editPhase(id){
+  const p=data.phases.find(p=>p.id===id);if(!p)return;
+  document.getElementById('pm-t').textContent='Edit Phase';
+  document.getElementById('pe-id').value=id;
+  document.getElementById('pb').value=p.badge||'';
+  document.getElementById('pn').value=p.name||'';
+  document.getElementById('pcol').value=p.color||'purple';
+  document.getElementById('ptime').value=p.time||'';
+  document.getElementById('pover').value=p.overlay||'';
+  document.getElementById('ptrig').value=p.trigger||'';
+  document.getElementById('pdesc').value=p.desc||'';
+  document.getElementById('dpb').style.display='inline-block';
+  document.getElementById('pm').classList.add('on');
+}
+
+function savePhase(){
+  const id=document.getElementById('pe-id').value;
+  const pd={badge:document.getElementById('pb').value.trim()||'PHASE',name:document.getElementById('pn').value.trim()||'New Phase',color:document.getElementById('pcol').value,time:document.getElementById('ptime').value.trim(),overlay:document.getElementById('pover').value.trim(),trigger:document.getElementById('ptrig').value.trim(),desc:document.getElementById('pdesc').value.trim()};
+  if(id){const p=data.phases.find(p=>p.id===id);if(p)Object.assign(p,pd);}
+  else data.phases.push({id:'p'+Date.now(),cases:[],collapsed:false,...pd});
+  save();render();closeM('pm');
+}
+
+function delPhase(){
+  const id=document.getElementById('pe-id').value;
+  if(!id||!confirm('Delete this phase and all its cases?'))return;
+  data.phases=data.phases.filter(p=>p.id!==id);
+  save();render();closeM('pm');
+}
+
+function editCase(pid,cid){
+  const p=data.phases.find(p=>p.id===pid);if(!p)return;
+  const c=p.cases.find(c=>c.id===cid);if(!c)return;
+  document.getElementById('cm-t').textContent='Edit Case';
+  document.getElementById('ce-ph').value=pid;
+  document.getElementById('ce-id').value=cid;
+  document.getElementById('ct').value=c.text;
+  document.getElementById('ctag').value=c.tag;
+  document.getElementById('cpsel').innerHTML=data.phases.map(pp=>`<option value="${pp.id}"${pp.id===pid?' selected':''}>${pp.badge} ${pp.name}</option>`).join('');
+  document.getElementById('dcb').style.display='inline-block';
+  document.getElementById('cm').classList.add('on');
+}
+
+function saveCase(){
+  const pid=document.getElementById('ce-ph').value,cid=document.getElementById('ce-id').value,npid=document.getElementById('cpsel').value,tx=document.getElementById('ct').value.trim(),tag=document.getElementById('ctag').value;
+  if(!tx)return;
+  if(cid){const p=data.phases.find(p=>p.id===pid),c=p?.cases.find(c=>c.id===cid);if(c){c.text=tx;c.tag=tag;if(npid!==pid){p.cases=p.cases.filter(cc=>cc.id!==cid);const np=data.phases.find(p=>p.id===npid);if(np)np.cases.push(c);}}}
+  save();render();closeM('cm');
+}
+
+function delCase(){
+  const pid=document.getElementById('ce-ph').value,cid=document.getElementById('ce-id').value;
+  if(!confirm('Delete this case?'))return;
+  const p=data.phases.find(p=>p.id===pid);
+  if(p)p.cases=p.cases.filter(c=>c.id!==cid);
+  save();render();closeM('cm');
+}
+
+function closeM(id){document.getElementById(id).classList.remove('on');}
+document.querySelectorAll('.mback').forEach(b=>b.addEventListener('click',e=>{if(e.target===b)b.classList.remove('on');}));
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(()=>t.style.display='none',1500);}
+
+function doExport(){
+  const snapshot=JSON.stringify(data);
+  const fullHTML=document.documentElement.outerHTML;
+  const patched=fullHTML.replace(
+    /function load\(\)\{.*?\}/,
+    `function load(){try{const s=localStorage.getItem(SK);data=s?JSON.parse(s):JSON.parse(${JSON.stringify(snapshot)});}catch(e){data=JSON.parse(${JSON.stringify(snapshot)});}}`
+  );
+  const a=document.createElement('a');
+  a.href='data:text/html;charset=utf-8,'+encodeURIComponent(patched);
+  a.download='Tutorial_System_Test_Checklist_'+new Date().toISOString().slice(0,10)+'.html';
+  a.click();
+  showToast('✓ Exported');
+}
+
+load();render();
+</script>
+</body>
+</html>

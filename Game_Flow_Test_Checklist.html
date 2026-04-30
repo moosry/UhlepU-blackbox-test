@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Game Flow Test Checklist · UhelpU</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#f0f0f5;--white:#fff;--dark2:#16161f;--dark3:#1c1c28;
+  --border:#e2e2ec;--text:#111118;--mid:#6b6b88;--dim:rgba(200,190,240,0.5);
+  --lt:#f0eeff;--purple:#7c5af6;--pdim:rgba(124,90,246,0.1);
+  --green:#16a34a;--gbg:#dcfce7;--gtxt:#15803d;
+  --amber:#b45309;--abg:#fef3c7;--atxt:#92400e;
+  --red:#dc2626;--rbg:#fee2e2;--rtxt:#991b1b;
+  --f:'IBM Plex Sans',Helvetica,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+}
+body{background:var(--bg);font-family:var(--f);color:var(--text);padding:20px 16px 60px;}
+.wrap{max-width:700px;margin:0 auto;}
+.top{background:var(--dark2);border-radius:16px;padding:20px 22px;display:flex;align-items:center;gap:18px;margin-bottom:12px;}
+.top-left{flex:1;min-width:0;}
+.top-eye{font-family:var(--mono);font-size:9px;color:rgba(124,90,246,0.8);letter-spacing:.14em;text-transform:uppercase;margin-bottom:5px;}
+.top-title{font-size:20px;font-weight:700;color:var(--lt);letter-spacing:-.3px;}
+.donut-wrap{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.donut{position:relative;width:80px;height:80px;}
+.donut svg{width:80px;height:80px;transform:rotate(-90deg);}
+.d-bg{fill:none;stroke:rgba(255,255,255,0.07);stroke-width:6;}
+.d-fill{fill:none;stroke:var(--purple);stroke-width:6;stroke-linecap:round;stroke-dasharray:207.3;stroke-dashoffset:207.3;transition:stroke-dashoffset .5s ease;}
+.donut-c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;}
+.donut-n{font-family:var(--mono);font-size:26px;font-weight:500;color:var(--lt);line-height:1;}
+.donut-d{font-family:var(--mono);font-size:12px;color:var(--dim);line-height:1;}
+.donut-lbl{font-size:10px;color:var(--dim);letter-spacing:.04em;}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+.sc{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:11px 13px;display:flex;align-items:center;gap:9px;}
+.sc-ico{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.sc-ico.n{background:var(--gbg);}.sc-ico.e{background:var(--abg);}.sc-ico.b{background:var(--rbg);}
+.sc-num{font-family:var(--mono);font-size:18px;font-weight:500;color:var(--text);line-height:1;}
+.sc-lbl{font-size:11px;color:var(--mid);margin-top:1px;}
+.toolbar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:14px;}
+.tbtn{padding:7px 13px;border-radius:8px;border:1px solid var(--border);background:var(--white);color:var(--text);font-family:var(--f);font-size:12px;font-weight:500;cursor:pointer;transition:all .14s;}
+.tbtn:hover{border-color:rgba(124,90,246,.35);background:var(--pdim);}
+.tbtn.pri{background:var(--purple);border-color:var(--purple);color:#fff;}
+.tbtn.pri:hover{opacity:.88;}
+.fgroup{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap;}
+.fbtn{padding:5px 11px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--mid);font-family:var(--f);font-size:11px;font-weight:500;cursor:pointer;transition:all .14s;}
+.fbtn:hover,.fbtn.on{background:var(--pdim);color:var(--purple);border-color:rgba(124,90,246,.3);}
+.pcard{margin-bottom:8px;border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.06);}
+.ph{background:var(--dark2);padding:14px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none;transition:background .14s;border-bottom:1px solid rgba(255,255,255,0.04);}
+.pcard.col .ph{border-bottom:none;}
+.ph:hover{background:var(--dark3);}
+.stripe{width:4px;height:34px;border-radius:2px;flex-shrink:0;}
+.ph-mid{flex:1;min-width:0;}
+.ph-badge{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px;}
+.ph-name{font-size:14px;font-weight:600;color:var(--lt);line-height:1.25;}
+.ph-prog{display:flex;align-items:center;gap:8px;margin-top:5px;}
+.ph-bar{flex:1;max-width:120px;height:3px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;}
+.ph-fill{height:100%;border-radius:2px;transition:width .4s;}
+.ph-frac{font-family:var(--mono);font-size:10px;color:var(--dim);}
+.ph-frac.all{color:#22c97a;}
+.ph-arr{font-size:11px;color:rgba(255,255,255,0.25);transition:transform .2s;margin-left:6px;}
+.pcard.col .ph-arr{transform:rotate(-90deg);}
+.ph-edit{font-size:10px;padding:2px 8px;border-radius:5px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.3);cursor:pointer;opacity:0;transition:opacity .14s;font-family:var(--f);}
+.ph:hover .ph-edit{opacity:1;}
+.ph-edit:hover{color:var(--lt);border-color:rgba(255,255,255,0.25);}
+.pdetail{background:var(--dark3);padding:7px 18px;display:flex;gap:14px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,0.04);}
+.dk{font-size:11px;font-weight:600;color:rgba(160,150,210,0.5);margin-right:3px;}
+.dv{font-size:11px;color:rgba(200,190,240,0.7);}
+.pbody{background:var(--white);border:1px solid var(--border);border-top:none;}
+.pcard.col .pbody,.pcard.col .pdetail{display:none;}
+.crow{display:flex;align-items:flex-start;gap:12px;padding:12px 18px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s;}
+.crow:last-of-type{border-bottom:none;}
+.crow:hover{background:#fafafa;}
+.crow.done{opacity:.42;}
+.cbox{width:22px;height:22px;border-radius:6px;border:2px solid #d4d4e8;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.crow:hover .cbox{border-color:var(--purple);}
+.cbox.on{background:var(--purple);border-color:var(--purple);}
+.cbox.on::after{content:'✓';font-size:12px;color:#fff;font-weight:700;}
+.ccont{flex:1;min-width:0;}
+.ctxt{font-size:13px;color:var(--text);line-height:1.55;}
+.done .ctxt{text-decoration:line-through;color:var(--mid);}
+.tpill{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;padding:2px 9px;border-radius:999px;margin-top:5px;}
+.tpill.n{background:var(--gbg);color:var(--gtxt);}.tpill.e{background:var(--abg);color:var(--atxt);}.tpill.b{background:var(--rbg);color:var(--rtxt);}
+.tpill-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.tpill.n .tpill-dot{background:var(--green);}.tpill.e .tpill-dot{background:var(--amber);}.tpill.b .tpill-dot{background:var(--red);}
+.cacts{display:flex;gap:3px;flex-shrink:0;opacity:0;transition:opacity .14s;}
+.crow:hover .cacts{opacity:1;}
+.cact{font-size:10px;padding:3px 8px;border-radius:5px;border:1px solid var(--border);background:#f5f5f8;color:var(--mid);cursor:pointer;font-family:var(--f);transition:all .1s;}
+.cact:hover{color:var(--text);border-color:#c8c8dc;}
+.cact.del:hover{color:var(--red);border-color:rgba(220,38,38,.3);}
+.addwrap{background:#fafafa;border-top:1px solid var(--border);padding:9px 18px;}
+.addrow{display:flex;gap:7px;}
+.ainp{flex:1;background:var(--white);border:1px solid var(--border);border-radius:8px;padding:7px 11px;font-family:var(--f);font-size:13px;color:var(--text);outline:none;transition:border-color .14s;}
+.ainp:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(124,90,246,.08);}
+.ainp::placeholder{color:#b8b8d0;}
+.asel{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:7px 9px;font-family:var(--f);font-size:11px;font-weight:500;color:var(--mid);outline:none;cursor:pointer;}
+.abtn{padding:7px 14px;border-radius:8px;border:none;background:var(--purple);color:#fff;font-family:var(--f);font-size:12px;font-weight:600;cursor:pointer;}
+.abtn:hover{opacity:.88;}
+.empty{padding:14px 18px;text-align:center;font-size:12px;color:var(--mid);}
+.mback{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(3px);}
+.mback.on{display:flex;}
+.modal{background:#fff;border:1px solid var(--border);border-radius:16px;padding:26px;width:460px;max-width:92vw;box-shadow:0 20px 60px rgba(0,0,0,0.15);}
+.modal h2{font-size:18px;font-weight:700;color:var(--text);margin-bottom:18px;letter-spacing:-.3px;}
+.fg{margin-bottom:12px;}
+.fl{font-size:11px;font-weight:600;color:var(--mid);display:block;margin-bottom:4px;letter-spacing:.04em;}
+.fi,.fs,.fta{width:100%;background:#f7f7fb;border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-family:var(--f);font-size:13px;color:var(--text);outline:none;transition:border-color .14s;}
+.fi:focus,.fs:focus,.fta:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(124,90,246,.08);}
+.fi::placeholder,.fta::placeholder{color:#b8b8d0;}
+.fta{resize:vertical;min-height:56px;}
+.fs{cursor:pointer;}
+.frow{display:flex;gap:8px;margin-top:18px;}
+.toast{position:fixed;bottom:22px;right:22px;background:var(--dark2);color:var(--lt);font-size:12px;font-weight:500;padding:10px 16px;border-radius:10px;display:none;z-index:300;animation:sup .2s ease;}
+@keyframes sup{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="top">
+  <div class="top-left">
+    <div class="top-eye">UhelpU · Testing</div>
+    <div class="top-title">Game Flow Test Checklist</div>
+  </div>
+  <div class="donut-wrap">
+    <div class="donut">
+      <svg viewBox="0 0 80 80"><circle class="d-bg" cx="40" cy="40" r="33"/><circle class="d-fill" id="dfill" cx="40" cy="40" r="33"/></svg>
+      <div class="donut-c"><div class="donut-n" id="dn">0</div><div class="donut-d" id="dd">/ 0</div></div>
+    </div>
+    <div class="donut-lbl">Passed</div>
+  </div>
+</div>
+<div class="stats">
+  <div class="sc"><div class="sc-ico n">✓</div><div><div class="sc-num" id="sn">0</div><div class="sc-lbl">Normal Flow</div></div></div>
+  <div class="sc"><div class="sc-ico e">△</div><div><div class="sc-num" id="se">0</div><div class="sc-lbl">Edge Cases</div></div></div>
+  <div class="sc"><div class="sc-ico b">!</div><div><div class="sc-num" id="sb">0</div><div class="sc-lbl">Potential Bugs</div></div></div>
+</div>
+<div class="toolbar">
+  <button class="tbtn pri" onclick="openAddPhase()">＋ Add Phase</button>
+  <button class="tbtn" onclick="expandAll()">Expand All</button>
+  <button class="tbtn" onclick="collapseAll()">Collapse All</button>
+  <button class="tbtn pri" onclick="doExport()">⬇ Export</button>
+  <div class="fgroup">
+    <button class="fbtn on" onclick="setF('all',this)">All</button>
+    <button class="fbtn" onclick="setF('normal',this)">Normal</button>
+    <button class="fbtn" onclick="setF('edge',this)">Edge</button>
+    <button class="fbtn" onclick="setF('bug',this)">Bug</button>
+    <button class="fbtn" onclick="setF('undone',this)">Incomplete</button>
+  </div>
+</div>
+<div id="pc"></div>
+</div>
+<div class="mback" id="pm">
+  <div class="modal">
+    <h2 id="pm-t">Add Phase</h2><input type="hidden" id="pe-id">
+    <div class="fg"><label class="fl">Phase ID</label><input class="fi" id="pb" placeholder="PHASE 1"></div>
+    <div class="fg"><label class="fl">Phase Name</label><input class="fi" id="pn" placeholder="Page Transition"></div>
+    <div class="fg"><label class="fl">Colour</label><select class="fs" id="pcol"><option value="purple">Purple</option><option value="blue">Blue</option><option value="green">Green</option><option value="amber">Amber</option><option value="red">Red</option><option value="gray">Gray</option></select></div>
+    <div class="fg"><label class="fl">Precondition</label><input class="fi" id="ptime" placeholder="Game launched..."></div>
+    <div class="fg"><label class="fl">Page(s)</label><input class="fi" id="pover" placeholder="MainMenu..."></div>
+    <div class="fg"><label class="fl">Trigger</label><input class="fi" id="ptrig" placeholder="Player presses key..."></div>
+    <div class="fg"><label class="fl">Description</label><textarea class="fta" id="pdesc" placeholder="Main purpose..."></textarea></div>
+    <div class="frow">
+      <button class="tbtn pri" onclick="savePhase()">Save</button>
+      <button class="tbtn" onclick="closeM('pm')">Cancel</button>
+      <button class="tbtn" id="dpb" style="margin-left:auto;display:none;color:var(--red);border-color:rgba(220,38,38,.3);" onclick="delPhase()">Delete Phase</button>
+    </div>
+  </div>
+</div>
+<div class="mback" id="cm">
+  <div class="modal">
+    <h2 id="cm-t">Edit Case</h2><input type="hidden" id="ce-ph"><input type="hidden" id="ce-id">
+    <div class="fg"><label class="fl">Test Description</label><textarea class="fta" id="ct" style="min-height:72px;"></textarea></div>
+    <div class="fg"><label class="fl">Phase</label><select class="fs" id="cpsel"></select></div>
+    <div class="fg"><label class="fl">Type</label><select class="fs" id="ctag"><option value="normal">Normal Flow</option><option value="edge">Edge Case</option><option value="bug">Potential Bug</option></select></div>
+    <div class="frow">
+      <button class="tbtn pri" onclick="saveCase()">Save</button>
+      <button class="tbtn" onclick="closeM('cm')">Cancel</button>
+      <button class="tbtn" id="dcb" style="margin-left:auto;display:none;color:var(--red);border-color:rgba(220,38,38,.3);" onclick="delCase()">Delete Case</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const SK = 'uhelpu_gf_adhd_v1';
+const DD = {
+  "phases": [
+    {
+      "id": "p0",
+      "badge": "PHASE 0",
+      "name": "Launch — Main Menu Load",
+      "color": "purple",
+      "time": "Cold start",
+      "overlay": "MainMenu / TitleScreen",
+      "trigger": "User clicks start or presses any key",
+      "desc": "Tests whether the main menu loads correctly, the p5.js canvas initialises properly, and all UI elements render as expected.",
+      "cases": [
+        {"id":"p0c0","text":"After opening the game, the main menu renders correctly and the canvas size fits the window","tag":"normal","done":true},
+        {"id":"p0c4","text":"Refreshing the page (F5) reloads the main menu cleanly without carrying over any previous game state","tag":"normal","done":false},
+        {"id":"p0c5","text":"No brief white flash or p5.js default grey background flicker occurs during main menu load","tag":"bug","done":false}
+      ]
+    },
+    {
+      "id": "p1",
+      "badge": "PHASE 1",
+      "name": "Page Transition — Main Menu → Level Select",
+      "color": "blue",
+      "time": "Player clicks Start from the main menu",
+      "overlay": "MainMenu → LevelSelect / WorldSelect",
+      "trigger": "Click the \"Start Game\" button",
+      "desc": "Tests the transition from the main menu into level select, including the transition animation, state cleanup, and correct initialisation of the new page.",
+      "cases": [
+        {"id":"p1c0","text":"After clicking Start, the transition animation plays fully without stuttering or flickering","tag":"normal","done":false},
+        {"id":"p1c1","text":"The level select page displays correctly with no ghost image from the previous page","tag":"normal","done":false},
+        {"id":"p1c2","text":"Rapidly clicking Start multiple times does not trigger multiple page transitions or load two scenes simultaneously","tag":"bug","done":false},
+        {"id":"p1c3","text":"During page transition, p5.js draw() throws no errors and no undefined references occur","tag":"bug","done":false},
+        {"id":"p1c4","text":"After transitioning, the old page's keyPressed / mousePressed event listeners are correctly removed","tag":"bug","done":false},
+        {"id":"p1c5","text":"User input is blocked during the transition animation to prevent skipping intermediate steps","tag":"edge","done":false}
+      ],
+      "collapsed": false
+    },
+    {
+      "id": "p2",
+      "badge": "PHASE 2",
+      "name": "Page Transition — Entering a Game Level",
+      "color": "green",
+      "time": "Player selects a level and enters it",
+      "overlay": "LevelSelect → GameScene",
+      "trigger": "Click to enter level",
+      "desc": "Tests the transition from level select into the actual game scene, including level asset loading, player character initialisation, map rendering, and timer start.",
+      "cases": [
+        {"id":"p2c0","text":"After entering a level, the player character spawns at the correct start position facing right","tag":"normal","done":false},
+        {"id":"p2c1","text":"All map tiles and platforms render correctly with no missing elements","tag":"normal","done":false},
+        {"id":"p2c2","text":"The timer starts immediately on level entry (or on first player input), consistent with the design intent","tag":"normal","done":false},
+        {"id":"p2c3","text":"Background music starts from the beginning on level entry and does not resume from a previous position","tag":"normal","done":false},
+        {"id":"p2c4","text":"On the first frame of the level, the player does not fall through the floor or get launched due to physics initialisation issues","tag":"bug","done":false},
+        {"id":"p2c5","text":"All in-level UI elements (health, timer, ESC hint, etc.) display correctly","tag":"normal","done":false},
+        {"id":"p2c6","text":"After switching levels, all game objects from the previous level (bullets, enemies, particles) are fully cleared","tag":"bug","done":false}
+      ]
+    },
+    {
+      "id": "p3",
+      "badge": "PHASE 3",
+      "name": "ESC Key — Pause Menu",
+      "color": "amber",
+      "time": "During gameplay",
+      "overlay": "GameScene → PauseMenu",
+      "trigger": "Press ESC",
+      "desc": "Tests the full flow of opening the pause menu with ESC during gameplay, including game pause, menu display, resume, and various edge cases.",
+      "cases": [
+        {"id":"p3c0","text":"Pressing ESC during gameplay pauses the game — the player stops moving, the timer halts, and enemies freeze","tag":"normal","done":false},
+        {"id":"p3c1","text":"The pause menu displays correctly (Continue, Restart, Return to Main Menu, etc.) with no misaligned UI","tag":"normal","done":false},
+        {"id":"p3c2","text":"Background music pauses when the game pauses and resumes from the same position when gameplay resumes","tag":"normal","done":false},
+        {"id":"p3c3","text":"Pressing ESC again while paused resumes the game (ESC acts as a toggle)","tag":"normal","done":false},
+        {"id":"p3c4","text":"While the pause menu is open, in-game inputs (movement, jump) have no effect on the player character","tag":"bug","done":false},
+        {"id":"p3c5","text":"If the player was mid-jump or falling when paused, the physics state resumes correctly on unpause without resetting to the ground","tag":"edge","done":false},
+        {"id":"p3c6","text":"Pressing ESC very rapidly (toggling pause/resume quickly) does not corrupt the game state","tag":"bug","done":false},
+        {"id":"p3c7","text":"Pressing ESC during a cutscene or transition animation does not interrupt the animation or cause a crash","tag":"edge","done":false},
+        {"id":"p3c8","text":"Selecting \"Restart\" from the pause menu resets the level from the beginning — player returns to spawn, timer resets to zero","tag":"normal","done":false},
+        {"id":"p3c9","text":"Selecting \"Return to Main Menu\" from the pause menu correctly returns to the main menu and releases all level resources","tag":"normal","done":false}
+      ]
+    },
+    {
+      "id": "p4",
+      "badge": "PHASE 4",
+      "name": "Keyboard Navigation — Menu Controls",
+      "color": "purple",
+      "time": "Any menu screen",
+      "overlay": "All UI menus",
+      "trigger": "Arrow keys / WASD / Enter / ESC",
+      "desc": "Tests keyboard navigation support across menu screens, ensuring both mouse and keyboard operation work correctly.",
+      "cases": [
+        {"id":"p4c0","text":"Arrow keys (↑↓ or W/S) move focus between menu options; the focused option is highlighted correctly","tag":"normal","done":false},
+        {"id":"p4c1","text":"Pressing Enter confirms the currently highlighted option, equivalent to clicking with the mouse","tag":"normal","done":false},
+        {"id":"p4c2","text":"Pressing ↓ on the last option wraps focus back to the first option","tag":"edge","done":false},
+        {"id":"p4c3","text":"Pressing ↑ on the first option wraps focus to the last option","tag":"edge","done":false},
+        {"id":"p4c4","text":"When a menu opens, focus defaults to the first option without requiring manual navigation","tag":"normal","done":false},
+        {"id":"p4c5","text":"Mouse hover focus and keyboard navigation focus coexist without conflicting","tag":"edge","done":false},
+        {"id":"p4c6","text":"Pressing ESC inside a menu closes it or returns to the previous layer rather than exiting the game","tag":"normal","done":false},
+        {"id":"p4c7","text":"When a submenu (e.g. Settings) opens, keyboard focus correctly transfers into the new menu","tag":"normal","done":false},
+        {"id":"p4c8","text":"Pressing ESC to exit a submenu returns keyboard focus to the option that opened it","tag":"edge","done":false}
+      ]
+    },
+    {
+      "id": "p5",
+      "badge": "PHASE 5",
+      "name": "Death / Restart — Game State Reset",
+      "color": "red",
+      "time": "Player character dies or manually restarts",
+      "overlay": "GameScene → DeathScreen / Respawn",
+      "trigger": "Character death / pressing Restart",
+      "desc": "Tests the complete state reset during the death and restart flows to prevent leftover data from causing bugs.",
+      "cases": [
+        {"id":"p5c0","text":"On death, the death animation or effect plays correctly and the character stops moving","tag":"normal","done":false},
+        {"id":"p5c1","text":"A Game Over screen appears after death, showing the run time and options (Restart, Main Menu)","tag":"normal","done":false},
+        {"id":"p5c2","text":"Selecting Restart returns the player to the spawn point with the timer reset and all enemies and obstacles back to their initial state","tag":"normal","done":false},
+        {"id":"p5c3","text":"After restart, the physics engine state is clean — no residual velocity or state carried over from the previous run","tag":"bug","done":false},
+        {"id":"p5c4","text":"If audio was playing on death, music replays correctly after restart without stacking or going silent","tag":"bug","done":false},
+        {"id":"p5c5","text":"If the character dies exactly at an edge or just outside the death zone, no double-death or infinite death loop is triggered","tag":"edge","done":false},
+        {"id":"p5c6","text":"All player input is disabled on the death screen to prevent accidentally triggering a restart","tag":"edge","done":false},
+        {"id":"p5c7","text":"Pressing ESC on the death screen behaves as expected (returns to main menu, does not open the pause menu)","tag":"edge","done":false}
+      ]
+    },
+    {
+      "id": "p6",
+      "badge": "PHASE 6",
+      "name": "Language Switching — Chinese / English",
+      "color": "blue",
+      "time": "Language switched at any point",
+      "overlay": "All pages system-wide",
+      "trigger": "Change language setting",
+      "desc": "Tests the completeness and responsiveness of Chinese/English language switching, ensuring all UI text displays correctly in both languages.",
+      "cases": [
+        {"id":"p6c0","text":"All main menu text updates immediately after switching language without requiring a page refresh","tag":"normal","done":false},
+        {"id":"p6c1","text":"All pause menu options display correctly in both languages","tag":"normal","done":false},
+        {"id":"p6c2","text":"All text on the Game Over screen and Win Page switches correctly","tag":"normal","done":false},
+        {"id":"p6c3","text":"Text on the Settings page and Level Select page switches correctly","tag":"normal","done":false},
+        {"id":"p6c4","text":"In-game HUD elements (timer label, hint text) switch correctly","tag":"normal","done":false},
+        {"id":"p6c5","text":"After switching language and re-entering a page, the new language is retained and does not revert","tag":"bug","done":false},
+        {"id":"p6c6","text":"All error messages have corresponding translations and no raw key strings are displayed","tag":"bug","done":false},
+        {"id":"p6c7","text":"Long English strings do not overflow or break the layout of buttons or text containers","tag":"edge","done":false},
+        {"id":"p6c8","text":"Chinese fonts do not appear in English mode; English fonts do not have missing glyphs in Chinese mode","tag":"edge","done":false},
+        {"id":"p6c9","text":"Language setting is saved to localStorage and the correct language is restored after a page refresh","tag":"normal","done":false},
+        {"id":"p6c10","text":"Switching language mid-game updates the HUD immediately without pausing or crashing the game","tag":"edge","done":false}
+      ]
+    },
+    {
+      "id": "p7",
+      "badge": "PHASE 7",
+      "name": "Audio — Sound Effects & Music",
+      "color": "green",
+      "time": "Various stages of gameplay",
+      "overlay": "Full system",
+      "trigger": "Player actions and game events",
+      "desc": "Tests BGM and sound effect playback, pause, and volume control. Pays particular attention to common p5.js sound pitfalls during page transitions.",
+      "cases": [
+        {"id":"p7c0","text":"BGM starts playing automatically on entering the main menu without requiring any player action","tag":"normal","done":false},
+        {"id":"p7c1","text":"On entering a game level, the level music starts and the main menu BGM stops — no audio stacking","tag":"normal","done":false},
+        {"id":"p7c2","text":"BGM pauses when the game is paused and resumes from the same position (not from the beginning) on unpause","tag":"normal","done":false},
+        {"id":"p7c3","text":"Jump, damage, and death sound effects trigger correctly on the corresponding events and are not silent","tag":"normal","done":false},
+        {"id":"p7c4","text":"Triggering the same sound effect rapidly (e.g. quick jumps) allows sounds to overlap without cutting each other off","tag":"edge","done":false},
+        {"id":"p7c5","text":"Reducing volume proportionally lowers both BGM and sound effects","tag":"normal","done":false},
+        {"id":"p7c6","text":"Muting stops all audio; re-enabling restores normal volume","tag":"normal","done":false},
+        {"id":"p7c7","text":"No audio pop or distortion occurs during page transitions (main menu ↔ level)","tag":"bug","done":false},
+        {"id":"p7c8","text":"Switching the browser tab to the background stops or suspends BGM as expected","tag":"edge","done":false},
+        {"id":"p7c9","text":"Rapidly switching levels or restarting does not cause multiple BGM tracks to play simultaneously","tag":"bug","done":false}
+      ]
+    },
+    {
+      "id": "p8",
+      "badge": "PHASE 8",
+      "name": "Save / Progress Persistence",
+      "color": "gray",
+      "time": "On level completion, settings change, or exit",
+      "overlay": "Full system — localStorage",
+      "trigger": "Level cleared / settings changed / game closed",
+      "desc": "Tests that game progress and settings are correctly saved to and loaded from local storage, persisting across refreshes and restarts.",
+      "cases": [
+        {"id":"p8c0","text":"After completing a level, its completion status is correctly marked on the level select page","tag":"normal","done":false},
+        {"id":"p8c1","text":"After a page refresh, previously unlocked levels remain unlocked without needing to be cleared again","tag":"normal","done":false},
+        {"id":"p8c2","text":"Volume setting persists after a refresh and is not reset to the default","tag":"normal","done":false},
+        {"id":"p8c3","text":"Language setting persists after a refresh","tag":"normal","done":false},
+        {"id":"p8c4","text":"If localStorage data is corrupted, the game degrades gracefully and resets the data without crashing","tag":"bug","done":false},
+        {"id":"p8c5","text":"When localStorage is unavailable (e.g. private browsing mode), the game still runs normally","tag":"edge","done":false},
+        {"id":"p8c6","text":"Opening the game in multiple tabs in the same browser does not cause progress from one tab to overwrite or conflict with another","tag":"edge","done":false}
+      ]
+    },
+    {
+      "id": "p9",
+      "badge": "PHASE 9",
+      "name": "p5.js Specifics — Input Conflicts & Frame Rate",
+      "color": "red",
+      "time": "During gameplay — various inputs",
+      "overlay": "GameScene / Full system",
+      "trigger": "Various key combinations / performance stress",
+      "desc": "Bug-prone areas specific to p5.js: keyCode conflicts, browser default behaviour overrides, and physics drift caused by unstable frame rates.",
+      "cases": [
+        {"id":"p9c0","text":"Pressing arrow keys to move does not scroll the browser page (preventDefault is correctly called)","tag":"bug","done":false},
+        {"id":"p9c1","text":"Pressing the spacebar to jump does not scroll the page down","tag":"bug","done":false},
+        {"id":"p9c2","text":"Browser shortcuts like F5 (refresh) are not accidentally captured by the game","tag":"edge","done":false},
+        {"id":"p9c3","text":"After Alt+Tab switching away and back, key states reset correctly — no stuck arrow keys","tag":"bug","done":false},
+        {"id":"p9c4","text":"After clicking outside the page and returning, the canvas regains focus and keyboard input works correctly","tag":"bug","done":false},
+        {"id":"p9c5","text":"When frame rate drops from 60fps to 30fps, the player's movement speed does not double or halve","tag":"bug","done":false},
+        {"id":"p9c6","text":"Holding multiple keys simultaneously (e.g. ← + jump) causes no errors, with input priority matching the design intent","tag":"edge","done":false},
+        {"id":"p9c7","text":"Pressing keys before p5.js setup() completes does not cause undefined errors","tag":"bug","done":false},
+        {"id":"p9c8","text":"After running for 10+ minutes, memory usage does not grow continuously and no significant lag occurs","tag":"edge","done":false},
+        {"id":"p9c9","text":"Touch input on mobile/tablet browsers (if supported) does not trigger unintended mouse events","tag":"edge","done":false}
+      ]
+    },
+    {
+      "id": "p10",
+      "badge": "PHASE 10",
+      "name": "Level Completion — Win Page Flow",
+      "color": "green",
+      "time": "Player reaches the goal and triggers level completion",
+      "overlay": "GameScene → WinPage",
+      "trigger": "Touching the goal area",
+      "desc": "Tests the full flow of completion detection, completion animation, score display, and subsequent actions (play again, return).",
+      "cases": [
+        {"id":"p10c0","text":"Touching the goal triggers the completion event exactly once — continuous contact does not fire it multiple times","tag":"bug","done":false},
+        {"id":"p10c1","text":"The timer stops immediately on completion and the displayed time matches the exact moment of completion","tag":"normal","done":false},
+        {"id":"p10c2","text":"The completion animation or effect plays and all player input is disabled during it","tag":"normal","done":false},
+        {"id":"p10c3","text":"The Win Page displays the correct run time, consistent with what the in-level timer showed","tag":"normal","done":false},
+        {"id":"p10c4","text":"\"Play Again\" and \"Return to Main Menu\" options are displayed on the Win Page and both work correctly","tag":"normal","done":false},
+        {"id":"p10c5","text":"Selecting \"Play Again\" fully resets the level, including all enemies, obstacles, and player state","tag":"normal","done":false},
+        {"id":"p10c6","text":"If completing the level unlocks a new level, the Win Page shows a corresponding prompt and the level select page reflects the unlock","tag":"normal","done":false},
+        {"id":"p10c7","text":"Pressing ESC on the Win Page behaves as expected (returns to main menu, does not open the pause menu)","tag":"edge","done":false}
+      ]
+    }
+  ]
+};
+
+const COLS={
+  purple:{c:'#7c5af6',tc:'rgba(167,139,250,0.85)'},
+  blue:  {c:'#60a5fa',tc:'rgba(147,197,253,0.85)'},
+  green: {c:'#22c97a',tc:'rgba(134,239,172,0.85)'},
+  amber: {c:'#f59e0b',tc:'rgba(253,211,77,0.85)'},
+  red:   {c:'#f05252',tc:'rgba(252,165,165,0.85)'},
+  gray:  {c:'#9ca3af',tc:'rgba(209,213,219,0.85)'},
+};
+const CIRC=2*Math.PI*33;
+let data,filter='all';
+function load(){try{const s=localStorage.getItem(SK);data=s?JSON.parse(s):JSON.parse(JSON.stringify(DD));}catch(e){data=JSON.parse(JSON.stringify(DD));}}
+function save(){localStorage.setItem(SK,JSON.stringify(data));showToast('✓ Saved');}
+function render(){
+  const con=document.getElementById('pc');con.innerHTML='';
+  data.phases.forEach(ph=>{
+    const col=COLS[ph.color]||COLS.purple;
+    const vis=ph.cases.filter(c=>filter==='all'?true:filter==='undone'?!c.done:c.tag===filter);
+    const tot=ph.cases.length,dn=ph.cases.filter(c=>c.done).length,pct=tot>0?dn/tot*100:0,allDone=dn===tot&&tot>0;
+    const d=document.createElement('div');
+    d.className='pcard'+(ph.collapsed?' col':'');
+    const detail=ph.time||ph.overlay||ph.trigger?
+      `<div class="pdetail">${ph.time?`<span><span class="dk">Pre:</span><span class="dv">${ph.time}</span></span>`:''} ${ph.overlay?`<span><span class="dk">Page:</span><span class="dv">${ph.overlay}</span></span>`:''} ${ph.trigger?`<span><span class="dk">Trigger:</span><span class="dv">${ph.trigger}</span></span>`:''}</div>`:'';
+    const rows=vis.length===0?'<div class="empty">No cases</div>':vis.map(c=>{
+      const pill=c.tag==='normal'?'n':c.tag==='edge'?'e':'b';
+      const lbl=c.tag==='normal'?'Normal Flow':c.tag==='edge'?'Edge Case':'Potential Bug';
+      return `<div class="crow${c.done?' done':''}" onclick="toggleC('${ph.id}','${c.id}')"><div class="cbox${c.done?' on':''}"></div><div class="ccont"><div class="ctxt">${c.text}</div><span class="tpill ${pill}"><span class="tpill-dot"></span>${lbl}</span></div><div class="cacts" onclick="event.stopPropagation()"><button class="cact" onclick="editCase('${ph.id}','${c.id}')">Edit</button><button class="cact del" onclick="delC('${ph.id}','${c.id}')">Delete</button></div></div>`;
+    }).join('');
+    d.innerHTML=`<div class="ph" onclick="toggleP('${ph.id}')"><div class="stripe" style="background:${col.c};"></div><div class="ph-mid"><div class="ph-badge" style="color:${col.tc};">${ph.badge}</div><div class="ph-name">${ph.name}</div><div class="ph-prog"><div class="ph-bar"><div class="ph-fill" style="width:${pct}%;background:${col.c};"></div></div><span class="ph-frac${allDone?' all':''}">${dn} / ${tot}${allDone?' ✓':''}</span></div></div><button class="ph-edit" onclick="event.stopPropagation();editPhase('${ph.id}')">Edit</button><span class="ph-arr">▾</span></div>${detail}<div class="pbody">${rows}<div class="addwrap"><div class="addrow"><input class="ainp" id="qi-${ph.id}" placeholder="Quick add case..." onclick="event.stopPropagation()" onkeydown="if(event.key==='Enter'){event.stopPropagation();quickAdd('${ph.id}');}"><select class="asel" id="qt-${ph.id}" onclick="event.stopPropagation()"><option value="normal">Normal Flow</option><option value="edge">Edge Case</option><option value="bug">Potential Bug</option></select><button class="abtn" onclick="event.stopPropagation();quickAdd('${ph.id}')">＋</button></div></div></div>`;
+    con.appendChild(d);
+  });
+  updGlobal();
+}
+function toggleP(id){const p=data.phases.find(p=>p.id===id);if(p){p.collapsed=!p.collapsed;save();render();}}
+function toggleC(pid,cid){const p=data.phases.find(p=>p.id===pid);if(!p)return;const c=p.cases.find(c=>c.id===cid);if(c){c.done=!c.done;save();render();}}
+function quickAdd(pid){const i=document.getElementById('qi-'+pid),t=document.getElementById('qt-'+pid),tx=i.value.trim();if(!tx)return;const p=data.phases.find(p=>p.id===pid);if(!p)return;p.cases.push({id:'c'+Date.now(),text:tx,tag:t.value,done:false});i.value='';save();render();}
+function delC(pid,cid){if(!confirm('Delete this test case?'))return;const p=data.phases.find(p=>p.id===pid);if(p){p.cases=p.cases.filter(c=>c.id!==cid);save();render();}}
+function updGlobal(){let tot=0,dn=0,n=0,e=0,b=0;data.phases.forEach(p=>p.cases.forEach(c=>{tot++;if(c.done)dn++;if(c.tag==='normal')n++;else if(c.tag==='edge')e++;else b++;}));document.getElementById('dn').textContent=dn;document.getElementById('dd').textContent='/ '+tot;document.getElementById('dfill').style.strokeDashoffset=CIRC-(dn/Math.max(tot,1))*CIRC;document.getElementById('sn').textContent=n;document.getElementById('se').textContent=e;document.getElementById('sb').textContent=b;}
+function setF(f,btn){filter=f;document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');render();}
+function expandAll(){data.phases.forEach(p=>p.collapsed=false);save();render();}
+function collapseAll(){data.phases.forEach(p=>p.collapsed=true);save();render();}
+function openAddPhase(){document.getElementById('pm-t').textContent='Add Phase';document.getElementById('pe-id').value='';['pb','pn','ptime','pover','ptrig','pdesc'].forEach(x=>{const el=document.getElementById(x);if(el)el.value='';});document.getElementById('pcol').value='purple';document.getElementById('dpb').style.display='none';document.getElementById('pm').classList.add('on');}
+function editPhase(id){const p=data.phases.find(p=>p.id===id);if(!p)return;document.getElementById('pm-t').textContent='Edit Phase';document.getElementById('pe-id').value=id;document.getElementById('pb').value=p.badge||'';document.getElementById('pn').value=p.name||'';document.getElementById('pcol').value=p.color||'purple';document.getElementById('ptime').value=p.time||'';document.getElementById('pover').value=p.overlay||'';document.getElementById('ptrig').value=p.trigger||'';document.getElementById('pdesc').value=p.desc||'';document.getElementById('dpb').style.display='inline-block';document.getElementById('pm').classList.add('on');}
+function savePhase(){const id=document.getElementById('pe-id').value;const pd={badge:document.getElementById('pb').value.trim()||'PHASE',name:document.getElementById('pn').value.trim()||'New Phase',color:document.getElementById('pcol').value,time:document.getElementById('ptime').value.trim(),overlay:document.getElementById('pover').value.trim(),trigger:document.getElementById('ptrig').value.trim(),desc:document.getElementById('pdesc').value.trim()};if(id){const p=data.phases.find(p=>p.id===id);if(p)Object.assign(p,pd);}else data.phases.push({id:'p'+Date.now(),cases:[],collapsed:false,...pd});save();render();closeM('pm');}
+function delPhase(){const id=document.getElementById('pe-id').value;if(!id||!confirm('Delete this phase and all its cases?'))return;data.phases=data.phases.filter(p=>p.id!==id);save();render();closeM('pm');}
+function editCase(pid,cid){const p=data.phases.find(p=>p.id===pid);if(!p)return;const c=p.cases.find(c=>c.id===cid);if(!c)return;document.getElementById('cm-t').textContent='Edit Case';document.getElementById('ce-ph').value=pid;document.getElementById('ce-id').value=cid;document.getElementById('ct').value=c.text;document.getElementById('ctag').value=c.tag;document.getElementById('cpsel').innerHTML=data.phases.map(pp=>`<option value="${pp.id}"${pp.id===pid?' selected':''}>${pp.badge} ${pp.name}</option>`).join('');document.getElementById('dcb').style.display='inline-block';document.getElementById('cm').classList.add('on');}
+function saveCase(){const pid=document.getElementById('ce-ph').value,cid=document.getElementById('ce-id').value,npid=document.getElementById('cpsel').value,tx=document.getElementById('ct').value.trim(),tag=document.getElementById('ctag').value;if(!tx)return;if(cid){const p=data.phases.find(p=>p.id===pid),c=p?.cases.find(c=>c.id===cid);if(c){c.text=tx;c.tag=tag;if(npid!==pid){p.cases=p.cases.filter(cc=>cc.id!==cid);const np=data.phases.find(p=>p.id===npid);if(np)np.cases.push(c);}}}save();render();closeM('cm');}
+function delCase(){const pid=document.getElementById('ce-ph').value,cid=document.getElementById('ce-id').value;if(!confirm('Delete this case?'))return;const p=data.phases.find(p=>p.id===pid);if(p)p.cases=p.cases.filter(c=>c.id!==cid);save();render();closeM('cm');}
+function closeM(id){document.getElementById(id).classList.remove('on');}
+document.querySelectorAll('.mback').forEach(b=>b.addEventListener('click',e=>{if(e.target===b)b.classList.remove('on');}));
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(()=>t.style.display='none',1500);}
+function doExport(){const a=document.createElement('a');a.href='data:text/plain,'+encodeURIComponent(JSON.stringify(data,null,2));a.download='data_'+new Date().toISOString().slice(0,10)+'.json';a.click();showToast('✓ Exported');}
+load();render();
+</script>
+</body>
+</html>
